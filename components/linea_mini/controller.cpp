@@ -1,7 +1,6 @@
 #include "controller.h"
 
-namespace linea_mini {
-namespace gicar {
+namespace lm_gicar {
 
 static uint32_t elapsed(uint32_t now, uint32_t then) { return static_cast<uint32_t>(now - then); }
 
@@ -144,5 +143,4 @@ void Controller::loop(uint32_t now_ms) {
   }
 }
 
-}  // namespace gicar
-}  // namespace linea_mini
+}  // namespace lm_gicar

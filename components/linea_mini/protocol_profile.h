@@ -9,8 +9,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace linea_mini {
-namespace gicar {
+namespace lm_gicar {
 
 struct Profile {
   // --- Timing -------------------------------------------------------------------------
@@ -104,5 +103,4 @@ inline constexpr Profile kDefaultProfile = {
     /*z_temp_divisor*/ 10,
 };
 
-}  // namespace gicar
-}  // namespace linea_mini
+}  // namespace lm_gicar

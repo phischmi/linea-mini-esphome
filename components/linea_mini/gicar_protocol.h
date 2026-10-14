@@ -11,8 +11,7 @@
 
 #include "protocol_profile.h"
 
-namespace linea_mini {
-namespace gicar {
+namespace lm_gicar {
 
 constexpr size_t kMaxFrame = 300;
 
@@ -104,5 +103,4 @@ bool decode_config(const Frame &f, const Profile &p, ConfigData &out);
 bool decode_z(const Frame &f, const Profile &p, ZData &out);
 bool decode_ack(const Frame &f, const Profile &p, AckData &out);
 
-}  // namespace gicar
-}  // namespace linea_mini
+}  // namespace lm_gicar

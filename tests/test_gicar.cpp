@@ -11,7 +11,7 @@
 #include "controller.h"
 #include "gicar_protocol.h"
 
-using namespace linea_mini::gicar;
+using namespace lm_gicar;
 
 static int g_failed = 0;
 static int g_checks = 0;

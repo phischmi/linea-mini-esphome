@@ -30,17 +30,17 @@ void LineaMiniComponent::write(const uint8_t *data, size_t len) {
 }
 
 // Copies a frame with non-printable bytes replaced, so damaged frames are safe to log.
-static void printable(const ::linea_mini::gicar::Frame &f, char *out, size_t cap) {
+static void printable(const ::lm_gicar::Frame &f, char *out, size_t cap) {
   size_t n = f.len < cap - 1 ? f.len : cap - 1;
   for (size_t i = 0; i < n; i++)
     out[i] = (f.raw[i] >= 32 && f.raw[i] < 127) ? f.raw[i] : '.';
   out[n] = '\0';
 }
 
-void LineaMiniComponent::on_frame(const ::linea_mini::gicar::Frame &frame) {
-  using ::linea_mini::gicar::FrameStatus;
-  using ::linea_mini::gicar::FrameType;
-  char text[::linea_mini::gicar::kMaxFrame + 1];
+void LineaMiniComponent::on_frame(const ::lm_gicar::Frame &frame) {
+  using ::lm_gicar::FrameStatus;
+  using ::lm_gicar::FrameType;
+  char text[::lm_gicar::kMaxFrame + 1];
   if (frame.status != FrameStatus::OK) {
     printable(frame, text, sizeof(text));
     ESP_LOGW(TAG, "Damaged frame (%s, %u chars): %s",

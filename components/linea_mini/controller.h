@@ -9,8 +9,7 @@
 
 #include "gicar_protocol.h"
 
-namespace linea_mini {
-namespace gicar {
+namespace lm_gicar {
 
 // Implemented by the ESPHome component (UART) and by the fake machine in the tests.
 class Transport {
@@ -90,5 +89,4 @@ class Controller {
   uint32_t z_ms_ = 0;
 };
 
-}  // namespace gicar
-}  // namespace linea_mini
+}  // namespace lm_gicar

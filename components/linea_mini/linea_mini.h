@@ -16,8 +16,8 @@ namespace linea_mini {
 // lives in the host-tested plain C++ files; this class only moves bytes and publishes states.
 class LineaMiniComponent : public Component,
                            public uart::UARTDevice,
-                           public ::linea_mini::gicar::Transport,
-                           public ::linea_mini::gicar::Listener {
+                           public ::lm_gicar::Transport,
+                           public ::lm_gicar::Listener {
  public:
   LineaMiniComponent() : controller_(profile_, *this, this) {}
 
@@ -43,14 +43,14 @@ class LineaMiniComponent : public Component,
   // gicar::Transport
   void write(const uint8_t *data, size_t len) override;
   // gicar::Listener
-  void on_frame(const ::linea_mini::gicar::Frame &frame) override;
+  void on_frame(const ::lm_gicar::Frame &frame) override;
 
  protected:
   void publish_state_();
 
   // profile_ must be declared before controller_ (the controller keeps a reference to it).
-  ::linea_mini::gicar::Profile profile_ = ::linea_mini::gicar::kDefaultProfile;
-  ::linea_mini::gicar::Controller controller_;
+  ::lm_gicar::Profile profile_ = ::lm_gicar::kDefaultProfile;
+  ::lm_gicar::Controller controller_;
 
   // Last published values, to publish only on change.
   bool published_once_{false};

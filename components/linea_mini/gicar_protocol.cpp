@@ -3,8 +3,7 @@
 #include <cstdio>
 #include <cstring>
 
-namespace linea_mini {
-namespace gicar {
+namespace lm_gicar {
 
 // --- helpers -------------------------------------------------------------------------
 
@@ -217,5 +216,4 @@ bool decode_ack(const Frame &f, const Profile &p, AckData &out) {
   return true;
 }
 
-}  // namespace gicar
-}  // namespace linea_mini
+}  // namespace lm_gicar
