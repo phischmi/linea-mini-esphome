@@ -1,22 +1,67 @@
-# PLACEHOLDER, not runnable yet (Phase 1).
+# Passive CN11 sniffer for the La Marzocco Linea Mini (listen only, never transmits).
+# Guide: docs/guides/sniffer.md
 #
-# Goal: passive sniffer parallel to CN11 (listen only, never transmit).
-#   - one UART for the machine->gateway line (CN11 TXD), one for gateway->machine (CN11 RXD)
-#   - both: baud_rate 9600, inverted: true on rx_pin, rx_buffer_size >= 2048
-#   - log every byte with timestamp and channel (B = board->machine, M = machine->board)
-# Board and GPIO pins are not decided yet (see docs/hardware/cn11-interface.md).
-# Never connect a TX pin to the machine in sniffer mode.
+# Two receive-only UARTs, both 9600 8N1 and inverted (CN11 is idle-low):
+#   uart_m: CN11 pin 3 "TXD" (machine -> module)   logged as channel M
+#   uart_b: CN11 pin 2 "RXD" (module -> machine)   logged as channel B
+# The pin labels on the plug can be swapped (see docs/hardware/cn11-interface.md).
+# If the poll "R40000023DB" shows up on channel M, swap the two GPIOs below.
 #
-# esphome:
-#   name: linea-sniffer
-# esp32:
-#   board: TODO
-# uart:
-#   - id: uart_m
-#     rx_pin: {number: TODO, inverted: true}
-#     baud_rate: 9600
-#     rx_buffer_size: 2048
-#   - id: uart_b
-#     rx_pin: {number: TODO, inverted: true}
-#     baud_rate: 9600
-#     rx_buffer_size: 2048
+# No tx_pin is configured on purpose. Do not wire any ESP32 output to the machine.
+# Output is the USB serial log (115200). No Wi-Fi, no API: nothing else touches the bus timing.
+
+substitutions:
+  name: linea-sniffer
+  # Defaults for a classic ESP32 DevKit. GPIO25/26 are plain GPIOs on WROOM and WROVER.
+  # Other chips (S3, C3, ...): change board and pins, avoid strapping/flash/PSRAM pins.
+  pin_m: GPIO25
+  pin_b: GPIO26
+
+esphome:
+  name: ${name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+  level: DEBUG
+  baud_rate: 115200
+
+uart:
+  - id: uart_m
+    rx_pin:
+      number: ${pin_m}
+      inverted: true
+    baud_rate: 9600
+    rx_buffer_size: 2048
+    debug:
+      direction: RX
+      dummy_receiver: true
+      after:
+        bytes: 200
+        timeout: 15ms
+      sequence:
+        - lambda: |-
+            std::string s;
+            for (uint8_t c : bytes) s += (c >= 32 && c < 127) ? (char) c : '.';
+            ESP_LOGI("snf", "M %u %s", (unsigned) millis(), s.c_str());
+
+  - id: uart_b
+    rx_pin:
+      number: ${pin_b}
+      inverted: true
+    baud_rate: 9600
+    rx_buffer_size: 2048
+    debug:
+      direction: RX
+      dummy_receiver: true
+      after:
+        bytes: 200
+        timeout: 15ms
+      sequence:
+        - lambda: |-
+            std::string s;
+            for (uint8_t c : bytes) s += (c >= 32 && c < 127) ? (char) c : '.';
+            ESP_LOGI("snf", "B %u %s", (unsigned) millis(), s.c_str());

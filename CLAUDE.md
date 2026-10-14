@@ -21,7 +21,7 @@ ESPHome External Component für die La Marzocco Linea Mini. ESP32 ersetzt das Io
 - Maschine laut Quelle: Typ `03` (LINEA), `NEWMINIL`, ATmega32, 1 Gruppe, kein Flowmeter, Dampf per Pressostat.
 
 ## Maschine des Nutzers
-IoT-Modul-Gateway-Firmware **v7.4.2** (vom Nutzer genannt), Hauptplatinen-Firmware v2.12. Die Mitschnitte der Quelle stammen von einem anderen Exemplar; Abgleich mit eigenem Sniffer-Log steht aus (O8, O13). ESP32-Board und Pins noch offen, der Nutzer prüft zuhause. CN11-Gegenstecker fehlt noch. Mosquitto-Broker läuft in Home Assistant (MQTT optional, native API Standard). Waage: Acaia (Nutzer sagt „Luna“, vermutlich Lunar). Langziel Brew-by-Weight: erst über die HA-Integration, dann direkte BLE-Kopplung im ESP32 (Roadmap Phase 5).
+IoT-Modul-Gateway-Firmware **v7.4.2** (vom Nutzer genannt), Hauptplatinen-Firmware v2.12. Die Mitschnitte der Quelle stammen von einem anderen Exemplar; Abgleich mit eigenem Sniffer-Log steht aus (O8, O13). ESP32-Board und Pins noch offen, der Nutzer prüft zuhause. CN11-Gegenstecker fehlt noch. Mosquitto-Broker läuft in Home Assistant, MQTT ist nur Rückfall (ESPHome-API ist der Weg). Waage: Acaia Lunar. Langziel Brew-by-Weight: erst über die HA-Integration, dann direkte BLE-Kopplung im ESP32 (Roadmap Phase 5).
 
 ## Quellenstatus
 Ausgewertet: LMC-Repo (Commit `13db6b0`), Mitschnitte (selbst nachgerechnet), `gicar-serial` (nur Hintergrund). Fixtures in `tests/fixtures/`, Prüfung: `python3 -I tools/verify_fixtures.py`.
