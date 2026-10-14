@@ -1,0 +1,22 @@
+# PLACEHOLDER, not runnable yet (Phase 1).
+#
+# Goal: passive sniffer parallel to CN11 (listen only, never transmit).
+#   - one UART for the machine->gateway line (CN11 TXD), one for gateway->machine (CN11 RXD)
+#   - both: baud_rate 9600, inverted: true on rx_pin, rx_buffer_size >= 2048
+#   - log every byte with timestamp and channel (B = board->machine, M = machine->board)
+# Board and GPIO pins are not decided yet (see docs/hardware/cn11-interface.md).
+# Never connect a TX pin to the machine in sniffer mode.
+#
+# esphome:
+#   name: linea-sniffer
+# esp32:
+#   board: TODO
+# uart:
+#   - id: uart_m
+#     rx_pin: {number: TODO, inverted: true}
+#     baud_rate: 9600
+#     rx_buffer_size: 2048
+#   - id: uart_b
+#     rx_pin: {number: TODO, inverted: true}
+#     baud_rate: 9600
+#     rx_buffer_size: 2048

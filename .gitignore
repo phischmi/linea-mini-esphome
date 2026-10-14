@@ -1,0 +1,15 @@
+# ESPHome / PlatformIO
+.esphome/
+.pio/
+build/
+secrets.yaml
+# Python
+__pycache__/
+*.pyc
+.venv/
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+# Local scratch (reference clones live outside the repo; keep it that way)
+ref/

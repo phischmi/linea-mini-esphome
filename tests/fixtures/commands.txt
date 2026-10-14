@@ -1,0 +1,27 @@
+# Gateway->Maschine-Kommandos aus den Mitschnitten (CAP), Pruefsumme geprueft. Format: <frame> | <bedeutung> | <capture>
+# NUR zum Testen von Frame-Bau/Pruefsumme. Nicht ungeprueft an die Maschine senden (siehe CLAUDE.md).
+R40000023DB | Poll, alle 760 ms | CAP 01
+R00000020D4 | Config-Block lesen (32 B ab 0x0000) | CAP 04-12 periodisch
+R0020004CEB | 76 B ab 0x0020 lesen | CAP 04-12
+R0310001DEB | 29 B ab 0x0310 lesen | CAP 04-12
+R03000007DC | 7 B ab 0x0300 lesen | CAP 04-12
+R00E20004ED | 4 B ab 0x00E2 lesen | CAP 04-12
+R400F0001ED | Status 1 B ab 0x400F nach Standby/Wake | CAP 12
+X00000000D8 | Boot-Probe (nur einmal nach Maschinenstart) | CAP 13
+R40100001D8 | Boot: 1 B ab 0x4010 | CAP 13
+R40000001D7 | Boot: Maschinentyp 1 B ab 0x4000 | CAP 13
+R4003000CEC | Boot: Seriennummer 12 B ab 0x4003 | CAP 13
+R40010001D8 | Boot: 1 B ab 0x4001 | CAP 13
+W0007000203ADC8 | Solltemperatur 94.1 C (0x03AD) | CAP 04
+W0007000203B6BB | Solltemperatur 95.0 C (0x03B6) | CAP 04
+W00E100018157 | Dampf an (0x81) | CAP 08
+W00E10001014F | Dampf aus (0x01) | CAP 08
+W00E100018258 | Reinigungspuls (0x82), 6x im 1-s-Abstand | CAP 07
+W000000010038 | Standby (0x00 auf Reg 0x0000) | CAP 12
+W000000010139 | Wake (0x01 auf Reg 0x0000) | CAP 12
+W04000001003C | Sync-Register 0x0400=0x00 nach Standby | CAP 12
+W04010001003D | Sync-Register 0x0401=0x00 | CAP 12
+W04020001003E | Sync-Register 0x0402=0x00 | CAP 12
+W040600010042 | Sync-Register 0x0406=0x00 | CAP 12
+W000B0001004A | Pre-Infusion aus (0x00 auf Reg 0x000B) | CAP 06
+W00E200011454 | Pre-Infusion-Dauer 0x14 (Einheit unbekannt) | CAP 05

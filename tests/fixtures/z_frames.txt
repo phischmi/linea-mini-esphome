@@ -1,0 +1,6 @@
+# Autonome Z-Frames (55 Zeichen). Format: <frame> | <szenario>
+# Quelle: CAP 14 (Brew ohne Puck) und CAP 07 (Backflush), selbst zusammengesetzt, Pruefsumme ueber ALLE 53 Zeichen davor inkl. "Z6".
+# Temperatur: Zeichen [45..48] als Hex /10 (NICHT [46..49]/160). Shot-Flag: Zeichen [34..35].
+Z60000016536E3230313130313035353101000009000003A2000098 | CAP 14 erster Frame, Shot 0x10, Temp 03A2 = 93.0 C, Counter 90
+Z60000016536E323031313031303535310100009B0000033E0000AF | CAP 14 letzter vollstaendiger Frame, Temp 033E = 83.0 C
+Z60000016536E3230313130313035353101000000000003AC0000A0 | CAP 07 Backflush erster Frame, Temp 03AC = 94.0 C

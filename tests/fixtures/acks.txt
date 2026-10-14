@@ -1,0 +1,10 @@
+# Write-ACKs der Maschine (13 Zeichen, grosses W), Pruefsumme geprueft. Format: <frame> | <zu welchem Write> | <capture>
+W00000001OK72 | ACK auf Write Reg 0x0000 (Standby/Wake) | CAP 12
+W00E10001OK88 | ACK auf Write Reg 0x00E1 | CAP 08, CAP 12
+W00070002OK7A | ACK auf Write Reg 0x0007 | CAP 04
+W04000001OK76 | ACK auf Write Reg 0x0400 | CAP 12
+W04010001OK77 | ACK auf Write Reg 0x0401 | CAP 12
+W04020001OK78 | ACK auf Write Reg 0x0402 | CAP 12
+W04060001OK7C | ACK auf Write Reg 0x0406 | CAP 12
+# X-Antwort auf die Boot-Probe (11 Zeichen), CAP 13:
+X00000001D9 | Antwort auf X00000000D8 | CAP 13

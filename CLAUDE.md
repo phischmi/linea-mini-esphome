@@ -1,0 +1,27 @@
+# CLAUDE.md
+
+Kurzfassung für künftige Sessions. Sprache: Gespräch Deutsch (du-Form); Code, Kommentare, Commits, Dateinamen Englisch; Doku-Texte Deutsch.
+
+## Projekt
+ESPHome External Component für die La Marzocco Linea Mini. ESP32 ersetzt das IoT-Modul an CN11 der GICAR-Platine. Details: `README.md`, `docs/`.
+
+## Regeln
+1. **Read-only ist Default.** Schreibzugriffe auf die Maschine nur nach ausdrücklicher Freigabe des Nutzers.
+2. **Keine unverifizierten Register schreiben.** Nur Register mit Status V in `docs/protocol/registers.md`. Die **Sperrliste** (0x80xx, 0x00FD, `X…02`, `H`, `S`, Reboot-Register, 0x0300/0x0310/0x0410 schreiben) ist tabu.
+3. **Jede Protokollaussage trägt einen Status** (verifiziert / unverifiziert / Widerspruch) und eine Quelle.
+4. **Kein Code und keine längeren Textpassagen aus unlizenzierten Quellen.** `Sc00bs110/linea-mini-controller` hat keine LICENSE: nur Fakten in eigenen Worten. `antondlr/gicar-serial` ist Apache-2.0 (Attribution beachten).
+5. **Keine LICENSE-Datei anlegen**, ohne den Nutzer zu fragen.
+6. Kein Remote, kein Push, solange der Nutzer es nicht sagt.
+
+## Protokollfakten (alle V, Details in `docs/protocol/`)
+- 9600 8N1, **invertiert**; ASCII-Hex; Prüfsumme = Summe aller ASCII-Zeichen davor mod 256 (auch bei Z-Frames inkl. `Z6`).
+- Poll `R40000023DB` alle **760 ms** (schneller stört). R-Antwort 81 Zeichen, Z-Frame 55, X-Antwort 11, W-ACK 13.
+- Temperatur /10 (R: Nutzbyte 28–29; Z: Zeichen 45–48). Brühflag = Nutzbyte 17 (folgt dem Hebel), Boiler-Flags = Nutzbyte 27.
+- Standby/Wake = Register 0x0000. Brew-Stop nur per Standby-Toggle. Reinigung = 6× `W00E1=82` im 1-s-Abstand, dann ruhig (Poll ~10 s).
+- Maschine laut Quelle: Typ `03` (LINEA), `NEWMINIL`, ATmega32, 1 Gruppe, kein Flowmeter, Dampf per Pressostat.
+
+## Quellenstatus
+Ausgewertet: LMC-Repo (Commit `13db6b0`), Mitschnitte (selbst nachgerechnet), `gicar-serial` (nur Hintergrund). Fixtures in `tests/fixtures/`, Prüfung: `python3 -I tools/verify_fixtures.py`.
+
+## Offen
+Siehe `docs/protocol/open-questions.md`.

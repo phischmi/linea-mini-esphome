@@ -1,0 +1,5 @@
+# R-Antwort auf R00000020D4 (32 Bytes ab 0x0000, 75 Zeichen), Quelle CAP 13 (Boot), Pruefsumme geprueft.
+# Nutzbyte 7..8 = aktive Solltemperatur (03B6 = 95.0 C); uebrige Bytes unbekannt.
+R000000200100000000000003B60000000000000032000000000000000000000000000000F5 | CAP 13 nach Boot, Setpoint 95.0 C
+# Pre-Infusion-Block R00E20004ED -> Antwort (4 Bytes, erstes Byte = 0x14). Quelle CAP 13.
+R00E200041400000072 | CAP 13, Pre-Infusion-Wert 0x14
