@@ -18,8 +18,9 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 - [ ] Pegel an CN11 messen, Loopback-Test
 
 ## Phase 2: Komponente read-only
-- [ ] Hostseitig testbarer Frame-Parser (R/Z/X/W) gegen `tests/fixtures/`
-- [ ] Nicht blockierender Zustandsautomat: Boot-X-Probe, Polling 760 ms
+- [x] Hostseitig testbarer Frame-Parser (R/Z/X/W) gegen `tests/fixtures/` (`components/linea_mini/gicar_protocol.*`, Profil in `protocol_profile.h`)
+- [x] Nicht blockierender, rein lesender Zustandsautomat: Boot-X-Probe, Polling 760 ms (`controller.*`)
+- [ ] ESPHome-Anbindung (Schema, UART-Transport, Logging)
 - [ ] Sensoren: Temperatur, Brühen, Pumpe, Heizung, Dampf, Standby, Verbunden
 - [ ] Original-Modul entfernt, ESP als alleiniger Master
 
