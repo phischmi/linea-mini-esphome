@@ -18,5 +18,6 @@ Eine **External Component** unter `components/linea_mini/` (Python-Schema + C++ 
 ## Konsequenzen
 - Struktur: `components/linea_mini/{__init__.py, linea_mini.h, linea_mini.cpp}`; später ggf. `sensor.py`, `binary_sensor.py`, `climate.py`.
 - Read-only ist Default; Writes werden als eigene, explizit freigegebene Services/Entities gebaut.
-- Optional später: BLE-Waage (Felicita Arc, Bookoo Themis Ultra) über `ble_client`-Sensor mit Lambda. Dokumentation zu Notify + Lambda ist dünn (U).
+- Später: Brew-by-Weight. Die Waage des Nutzers ist eine Acaia (genannt „Luna“, vermutlich Lunar); zuerst über die vorhandene HA-Integration, Ziel ist die direkte BLE-Kopplung im ESP32 (Roadmap Phase 5b). Alternativ-Waagen: Felicita Arc, Bookoo Themis Ultra über `ble_client`-Sensor mit Lambda. Dokumentation zu Notify + Lambda ist dünn (U); das Acaia-Protokoll ist noch nicht recherchiert (U).
+- Transport zu HA: native ESPHome-API als Standard; Mosquitto-Broker in HA ist vorhanden, MQTT bleibt optional.
 - Alternative (verworfen): eigene PlatformIO-Firmware wie LMC. Mehr Aufwand für WLAN/OTA/HA, weniger Wiederverwendung.

@@ -7,7 +7,8 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 - [x] Fixtures aus Mitschnitten, Prüfsummen geprüft
 - [x] Repo-Gerüst
 - [x] Lizenz: GPL-3.0
-- [ ] Offene Entscheidungen klären (Board: ESP32 vorhanden, Typ prüft der Nutzer zuhause; GPIO, MQTT, Gegenstecker)
+- [x] MQTT-Broker vorhanden (Mosquitto in Home Assistant)
+- [ ] Offene Entscheidungen klären (Board: ESP32 vorhanden, Typ prüft der Nutzer zuhause; GPIO; CN11-Gegenstecker noch zu besorgen)
 
 ## Phase 1: Sniffer (passiv)
 - [ ] `examples/sniffer.yaml` lauffähig machen (zwei UARTs parallel zu CN11, nur lauschen)
@@ -32,7 +33,8 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 - [ ] Brew-Stop per Standby-Toggle (ACK-gesteuert, garantierter Wake)
 
 ## Phase 5: BBW, HA, MQTT
-- [ ] BLE-Waage (Felicita Arc, Bookoo Themis Ultra) über `ble_client`
-- [ ] Brew-by-Weight
-- [ ] HA-Dashboard, optional MQTT
+- [ ] **5a, Brew-by-Weight über Home Assistant:** Waage (Acaia, Typ vom Nutzer genannt als „Luna“, vermutlich Lunar, zu bestätigen) hängt an der vorhandenen HA-Integration. HA liefert das Gewicht, der ESP stoppt den Shot über den Brew-Stop (Phase 4). Latenz HA→ESP messen (Ziel: Stoppzeitpunkt mit Vorhalt/Offset einstellbar).
+- [ ] **5b, direkte BLE-Kopplung ESP32 ↔ Waage (Ziel):** Gewicht per BLE-Notify im ESP, Stopp ohne Umweg über HA. Offene Punkte: Acaia-Protokoll der Lunar/Lunar-2021 (Handshake, Gewichtsframes) ist hier **U** und erst zu recherchieren (nicht aus unlizenzierten Quellen kopieren); ESPHome hat keine fertige Acaia-Komponente (zu prüfen); WLAN+BLE-Koexistenz auf dem vorhandenen ESP32 (laut Quelle störte BLE-Scan ein Software-UART, Hardware-UART war unempfindlich); evtl. eigene `ble_client`-Komponente statt Lambda.
+- [ ] Alternativ/Ergänzung: BLE-Waagen Felicita Arc, Bookoo Themis Ultra über `ble_client`-Sensor
+- [ ] HA-Dashboard; MQTT (Mosquitto vorhanden) optional neben der nativen API – nicht beides für dieselben Entitäten aktivieren, sonst doppelte Entitäten in HA
 - [ ] Auto-Standby und Zeitplan im ESP (laufen nicht auf der Maschine)
