@@ -113,7 +113,6 @@ void LineaMiniComponent::dump_config() {
                 "  Boot probe: %s\n"
                 "  Poll period: %u ms",
                 YESNO(this->profile_.send_probe), (unsigned) this->profile_.poll_period_ms);
-  this->check_uart_settings(9600);
   LOG_SENSOR("  ", "Coffee temperature", this->coffee_temperature_sensor_);
   LOG_SENSOR("  ", "Setpoint temperature", this->setpoint_temperature_sensor_);
   LOG_SENSOR("  ", "Frames OK", this->frames_ok_sensor_);
