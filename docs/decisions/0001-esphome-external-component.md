@@ -13,7 +13,7 @@ Eine **External Component** unter `components/linea_mini/` (Python-Schema + C++ 
 - `uart:` kennt `inverted: true` auf `rx_pin`/`tx_pin` (V, ESPH-Doku). Dass im ESP-IDF-Backend die Inversion in Hardware läuft (`uart_set_line_inverse`), ist U (Doku nennt es nicht; Quelle nutzt Hardware-UART mit Inversion live). Kein Software-UART nötig.
 - `rx_buffer_size` ist auf 256 vorbelegt (V, ESPH); beim Brühen kommen >600 B/s, daher 1024–2048 setzen.
 - Der Boot-Handshake darf `loop()` nicht blockieren (ESPHome-Watchdog/WLAN): Zustandsautomat statt `delay(2000)`/Blocking-Reads.
-- Lizenzen: ESPHome-Python MIT, C/C++-Runtime GPLv3. Eine External Component, die ESPHome-Header einbindet, ist abgeleitet; Lizenzempfehlung steht im Abschlussbericht der Session und ist **noch nicht entschieden**.
+- Lizenzen: ESPHome-Python MIT, C/C++-Runtime GPLv3. Eine External Component, die ESPHome-Header einbindet, ist abgeleitet; Entscheidung des Nutzers: **GPL-3.0** (`LICENSE`).
 
 ## Konsequenzen
 - Struktur: `components/linea_mini/{__init__.py, linea_mini.h, linea_mini.cpp}`; später ggf. `sensor.py`, `binary_sensor.py`, `climate.py`.

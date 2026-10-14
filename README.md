@@ -16,4 +16,4 @@ Das Original-IoT-Modul bleibt aufbewahrt. Zum Zurückrüsten: ESP-Adapter von CN
 ## Struktur
 `docs/` Wissensbasis · `components/linea_mini/` External Component (Platzhalter) · `tests/` Fixtures und Testkonzept · `examples/` ESPHome-Beispiele (Platzhalter) · `tools/` Hilfsskripte.
 
-Lizenz: noch nicht festgelegt (Entscheidung ausstehend).
+Lizenz: [GPL-3.0](LICENSE) (ESPHome-C++-Runtime ist GPLv3, die Komponente bindet deren Header ein).

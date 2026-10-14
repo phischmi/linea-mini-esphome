@@ -6,11 +6,12 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 - [x] Protokoll- und Hardware-Doku mit Quellen/Status
 - [x] Fixtures aus Mitschnitten, Prüfsummen geprüft
 - [x] Repo-Gerüst
-- [ ] Offene Entscheidungen klären (Lizenz, Board, GPIO, MQTT, Gegenstecker)
+- [x] Lizenz: GPL-3.0
+- [ ] Offene Entscheidungen klären (Board: ESP32 vorhanden, Typ prüft der Nutzer zuhause; GPIO, MQTT, Gegenstecker)
 
 ## Phase 1: Sniffer (passiv)
 - [ ] `examples/sniffer.yaml` lauffähig machen (zwei UARTs parallel zu CN11, nur lauschen)
-- [ ] Eigene Mitschnitte: Boot, Idle, Brew, Steam, Standby/Wake, Backflush
+- [ ] Eigene Mitschnitte (zuerst mit Original-Modul, Gateway-FW v7.4.2): Boot, Idle, Brew, Steam, Standby/Wake, Backflush
 - [ ] Offene Fragen O1–O11 mit echten Daten schließen
 - [ ] Pegel an CN11 messen, Loopback-Test
 
