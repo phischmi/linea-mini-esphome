@@ -71,6 +71,7 @@ class Controller {
   Transport &transport_;
   Listener *listener_;
   FrameParser parser_;
+  Frame rx_frame_;  // reused for every completed frame (no per-byte stack churn)
   MachineState state_;
   Phase phase_ = Phase::PROBING;
 

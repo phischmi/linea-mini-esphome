@@ -2,7 +2,7 @@
 
 ESPHome-Integration für die La Marzocco Linea Mini (2022, mit IoT-Modul, Hauptplatinen-Firmware v2.12). Ein eigener ESP32 ersetzt das IoT-Modul am Stecker **CN11** der GICAR-Hauptplatine. Kein Cloud-Zwang, Steuerung über die native ESPHome-API und Home Assistant, optional MQTT. Kein Display.
 
-**Status: Phase 0 (Dokumentation und Gerüst).** Es gibt noch keinen lauffähigen Komponenten-Code. Die Protokollbasis steht in [`docs/protocol/`](docs/protocol/overview.md), jede Aussage mit Quelle und Status (verifiziert / unverifiziert / Widerspruch). Offene Punkte: [`open-questions.md`](docs/protocol/open-questions.md). Fahrplan: [`docs/roadmap.md`](docs/roadmap.md). Sniffer-Anleitung: [`docs/guides/sniffer.md`](docs/guides/sniffer.md).
+**Status: Phase 1/2 (Sniffer-Vorbereitung, read-only-Komponente).** Die rein lesende Komponente (`components/linea_mini/`) ist geschrieben und am Rechner getestet, an der Maschine aber noch nicht erprobt. Die Protokollbasis steht in [`docs/protocol/`](docs/protocol/overview.md), jede Aussage mit Quelle und Status (verifiziert / unverifiziert / Widerspruch). Offene Punkte: [`open-questions.md`](docs/protocol/open-questions.md). Fahrplan: [`docs/roadmap.md`](docs/roadmap.md). Sniffer-Anleitung: [`docs/guides/sniffer.md`](docs/guides/sniffer.md).
 
 ## Sicherheitshinweis
 - Du arbeitest an einer netzspannungsführenden Maschine. Netzstecker ziehen, bevor du Gehäuse öffnest.
@@ -14,6 +14,6 @@ ESPHome-Integration für die La Marzocco Linea Mini (2022, mit IoT-Modul, Hauptp
 Das Original-IoT-Modul bleibt aufbewahrt. Zum Zurückrüsten: ESP-Adapter von CN11 abziehen, Original-Modul auf CN11 stecken. Keine Änderungen an der Hauptplatine nötig, solange nur CN11 benutzt wird.
 
 ## Struktur
-`docs/` Wissensbasis · `components/linea_mini/` External Component (Platzhalter) · `tests/` Fixtures und Testkonzept · `examples/` ESPHome-Beispiele (Platzhalter) · `tools/` Hilfsskripte.
+`docs/` Wissensbasis · `components/linea_mini/` External Component (read-only) · `tests/` Fixtures und Testkonzept · `examples/` ESPHome-Beispiele (Sniffer, read-only-Komponente) · `tools/` Hilfsskripte.
 
 Lizenz: [GPL-3.0](LICENSE) (ESPHome-C++-Runtime ist GPLv3, die Komponente bindet deren Header ein).

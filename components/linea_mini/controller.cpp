@@ -26,9 +26,8 @@ void Controller::start_polling_(uint32_t now_ms) {
 }
 
 void Controller::on_byte(uint8_t byte, uint32_t now_ms) {
-  Frame f;
-  if (parser_.feed(byte, now_ms, f))
-    handle_frame_(f, now_ms);
+  if (parser_.feed(byte, now_ms, rx_frame_))
+    handle_frame_(rx_frame_, now_ms);
 }
 
 void Controller::handle_frame_(const Frame &f, uint32_t now_ms) {

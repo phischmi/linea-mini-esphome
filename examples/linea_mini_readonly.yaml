@@ -1,0 +1,93 @@
+# Read-only Linea Mini: replaces the original IoT module on CN11 (docs/hardware/cn11-interface.md).
+# This configuration only READS from the machine: boot probe and read requests, no writes.
+#
+# Board and pins are placeholders for a classic ESP32 DevKit. Change them for your board and
+# test the pins with a loopback first. Copy secrets.yaml.example to secrets.yaml.
+#
+# Before the first connection: measure CN11 levels (docs/guides/sniffer.md, step 3) and
+# run the sniffer with the ORIGINAL module first (open question O13).
+
+substitutions:
+  name: linea-mini
+  tx_pin: GPIO25   # -> CN11 RXD (machine receives), through 300 ohm in series
+  rx_pin: GPIO26   # <- CN11 TXD (machine sends), through 300 ohm in series; 10 kOhm pull-up to 3.3 V
+
+esphome:
+  name: ${name}
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+  level: DEBUG
+  # linea_mini frames at VERBOSE: set `level: VERBOSE` (very chatty while brewing).
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [linea_mini]
+
+uart:
+  id: gicar_uart
+  tx_pin:
+    number: ${tx_pin}
+    inverted: true     # CN11 is idle-low on both lines
+  rx_pin:
+    number: ${rx_pin}
+    inverted: true
+  baud_rate: 9600
+  rx_buffer_size: 2048 # >600 B/s while brewing, the default 256 overflows
+
+linea_mini:
+  id: machine
+  uart_id: gicar_uart
+  # send_probe: false   # skip the boot probe if the machine does not need it (open question O9)
+
+sensor:
+  - platform: linea_mini
+    linea_mini_id: machine
+    coffee_temperature:
+      name: "Coffee boiler temperature"
+    setpoint_temperature:
+      name: "Coffee boiler setpoint"
+    frames_ok:
+      name: "GICAR frames OK"
+    frames_bad:
+      name: "GICAR frames damaged"
+
+binary_sensor:
+  - platform: linea_mini
+    linea_mini_id: machine
+    connected:
+      name: "Machine connected"
+    brewing:
+      name: "Brewing"
+    pump:
+      name: "Pump"
+    heating:
+      name: "Coffee heater"
+    steam:
+      name: "Steam boiler"
+    standby:
+      name: "Standby"
+
+text_sensor:
+  - platform: linea_mini
+    linea_mini_id: machine
+    serial_number:
+      name: "Machine serial number"
