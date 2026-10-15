@@ -4,7 +4,7 @@ Ziel: Den Datenverkehr zwischen dem **Original-IoT-Modul** und der GICAR-Platine
 
 Der Sniffer **hört nur zu**. Sein ESP32 sendet nie auf den Bus (kein TX-Pin ist konfiguriert und keiner wird verdrahtet).
 
-Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die Konfiguration `examples/sniffer.yaml` ist für das XIAO ESP32-S3 mit ESPHome 2026.9.1 per `esphome config` geprüft; der Firmware-Build für dieses Board ist noch nicht bestätigt (für `esp32dev` war er fehlerfrei). An der Maschine ist sie **noch nicht getestet** (U).
+Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die Konfiguration `examples/sniffer.yaml` ist für das XIAO ESP32-S3 mit ESPHome 2026.9.1 per `esphome config` geprüft; die Firmware baut für dieses Board fehlerfrei. An der Maschine ist sie **noch nicht getestet** (U).
 
 ## 0. Sicherheit zuerst
 - Hinter dem Stecker arbeitet Netzspannungstechnik. **Netzstecker ziehen**, bevor du das Gehäuse öffnest oder etwas ansteckst. Verkabeln nur stromlos.

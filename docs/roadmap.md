@@ -22,7 +22,7 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 ## Phase 2: Komponente read-only
 - [x] Hostseitig testbarer Frame-Parser (R/Z/X/W) gegen `tests/fixtures/` (`components/linea_mini/gicar_protocol.*`, Profil in `protocol_profile.h`)
 - [x] Nicht blockierender, rein lesender Zustandsautomat: Boot-X-Probe, Polling 760 ms (`controller.*`)
-- [x] ESPHome-Anbindung (Schema, UART-Transport, Logging), `examples/linea_mini_readonly.yaml`: Konfiguration validiert (`esphome config`), Firmware für `esp32dev`, ESP32-C3 und ESP32-C6 kompiliert; Build für das XIAO ESP32-S3 in Prüfung, **nicht an der Maschine getestet**
+- [x] ESPHome-Anbindung (Schema, UART-Transport, Logging), `examples/linea_mini_readonly.yaml`: Konfiguration validiert (`esphome config`), Firmware für `esp32dev`, ESP32-C3 und ESP32-C6 kompiliert; XIAO ESP32-S3 (Zielboard) kompiliert, **nicht an der Maschine getestet**
 - [x] Sensoren: Temperatur, Sollwert, Brühen, Pumpe, Heizung, Dampf, Standby, Verbunden (Diagnose: Frame-Zähler, Seriennummer)
 - [ ] Original-Modul entfernt, ESP als alleiniger Master
 

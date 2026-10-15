@@ -1,6 +1,6 @@
 # components/linea_mini
 
-ESPHome External Component für die GICAR-Platine der Linea Mini (CN11). Stand: rein lesende Komponente. Parser und Zustandsautomat sind am Rechner getestet, die ESPHome-Anbindung ist konfigurationsgeprüft (`esphome config`) und als Firmware für `esp32dev`, ESP32-C3 und ESP32-C6 (ESP-IDF, ESPHome 2026.9.1) kompiliert (Build für das XIAO ESP32-S3 in Prüfung); die Komponente ist **noch nicht an der Maschine getestet**.
+ESPHome External Component für die GICAR-Platine der Linea Mini (CN11). Stand: rein lesende Komponente. Parser und Zustandsautomat sind am Rechner getestet, die ESPHome-Anbindung ist konfigurationsgeprüft (`esphome config`) und als Firmware für `esp32dev`, ESP32-C3 und ESP32-C6 (ESP-IDF, ESPHome 2026.9.1) kompiliert und für das Zielboard XIAO ESP32-S3; die Komponente ist **noch nicht an der Maschine getestet**.
 
 ## Dateien
 | Datei | Inhalt |
