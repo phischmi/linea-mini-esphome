@@ -8,7 +8,9 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 - [x] Repo-Gerüst
 - [x] Lizenz: GPL-3.0
 - [x] MQTT-Broker vorhanden (Mosquitto in Home Assistant)
-- [ ] Offene Entscheidungen klären (Board: ESP32 vorhanden, Typ prüft der Nutzer zuhause; GPIO; CN11-Gegenstecker noch zu besorgen)
+- [x] Board: **Seeed XIAO ESP32-S3** (Entscheidung des Nutzers), Pins D6 (TX, GPIO43) / D7 (RX, GPIO44)
+- [ ] CN11-Gegenstecker noch zu besorgen
+- [ ] Trägerplatine: Entwurf nach Sniffer-Test und Pegelmessung (`docs/hardware/carrier-board.md`)
 
 ## Phase 1: Sniffer (passiv)
 - [x] `examples/sniffer.yaml` (zwei Empfangs-UARTs parallel zu CN11, nur lauschen), Anleitung `docs/guides/sniffer.md`, Auswertung `tools/parse_sniffer_log.py`
@@ -20,7 +22,7 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 ## Phase 2: Komponente read-only
 - [x] Hostseitig testbarer Frame-Parser (R/Z/X/W) gegen `tests/fixtures/` (`components/linea_mini/gicar_protocol.*`, Profil in `protocol_profile.h`)
 - [x] Nicht blockierender, rein lesender Zustandsautomat: Boot-X-Probe, Polling 760 ms (`controller.*`)
-- [x] ESPHome-Anbindung (Schema, UART-Transport, Logging), `examples/linea_mini_readonly.yaml`: Konfiguration validiert (`esphome config`), Firmware für `esp32dev` (ESP-IDF) kompiliert, **nicht an der Maschine getestet**
+- [x] ESPHome-Anbindung (Schema, UART-Transport, Logging), `examples/linea_mini_readonly.yaml`: Konfiguration validiert (`esphome config`), Firmware für `esp32dev`, ESP32-C3 und ESP32-C6 kompiliert; Build für das XIAO ESP32-S3 in Prüfung, **nicht an der Maschine getestet**
 - [x] Sensoren: Temperatur, Sollwert, Brühen, Pumpe, Heizung, Dampf, Standby, Verbunden (Diagnose: Frame-Zähler, Seriennummer)
 - [ ] Original-Modul entfernt, ESP als alleiniger Master
 

@@ -38,5 +38,19 @@ Beim Autor waren die TXD/RXD-Labels am CN11-Stecker **vertauscht** (V, per Loopb
 - Buck vor dem Anschluss des ESP auf Sollspannung trimmen, unter Last (WLAN aktiv) nachmessen.
 - Ausfall von Platinen-Pins (Beobachtung des Autors): Auf manchen GPIO-Paaren kam nichts an (GPIO16/17 am C6, GPIO43 am S3). Pins daher nur mit Loopback prüfen, bevor die Beschaltung verlötet wird; GPIO-Wahl steht noch aus.
 
+## Board und Pins (Entscheidung des Nutzers: Seeed XIAO ESP32-S3)
+| Funktion | XIAO-Pin | GPIO | Anmerkung |
+|---|---|---|---|
+| ESP-TX → CN11 RXD (Maschine empfängt) | D6 | 43 | über 300 Ω in Serie |
+| ESP-RX ← CN11 TXD (Maschine sendet) | D7 | 44 | Pegelanpassung siehe oben |
+| Sniffer Kanal B / M (nur Eingänge) | D6 / D7 | 43 / 44 | dieselben Leitungen, im Sniffer nur gelesen |
+| GND | GND | – | gemeinsame Masse mit CN11 Pin 1 |
+
+- Die Zuordnung D0–D10 → GPIO stammt aus der ESPHome-Boarddefinition (`seeed_xiao_esp32s3`: D6 = 43, D7 = 44). V gegenüber ESPHome, U gegenüber dem Seeed-Datenblatt (nicht abgeglichen).
+- GPIO43/44 sind die Standard-UART0-Pins. Deshalb steht in den Beispielen `logger: hardware_uart: USB_SERIAL_JTAG`; das Log läuft über den USB-C-Anschluss.
+- Zu meiden: D2 (GPIO3, Strapping), BOOT (GPIO0), USB-Pins GPIO19/20 (nicht herausgeführt), Octal-PSRAM-Pins GPIO35–37 (nicht herausgeführt, U).
+- Das Board hat nur einen nativen USB-Anschluss (keine UART-Brücke) und einen Anschluss für eine externe Antenne (U.FL, U).
+- Loopback-Test (siehe oben) vor dem Anschluss an die Maschine: D6 mit D7 verbinden, Firmware sendet `R40000023DB`, muss dasselbe zurückempfangen.
+
 ## Sicherheit
 Hinter dem Stecker liegt Netzspannungstechnik. Nur bei gezogenem Netzstecker arbeiten, Leitungen weg von Heizelementen und Netzverdrahtung führen. Das Original-Modul bleibt als Rückfall erhalten (Stecker umstecken).

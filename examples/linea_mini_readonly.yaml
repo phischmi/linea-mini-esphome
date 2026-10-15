@@ -1,27 +1,28 @@
 # Read-only Linea Mini: replaces the original IoT module on CN11 (docs/hardware/cn11-interface.md).
 # This configuration only READS from the machine: boot probe and read requests, no writes.
 #
-# Board and pins are placeholders for a classic ESP32 DevKit. Change them for your board and
-# test the pins with a loopback first. Copy secrets.yaml.example to secrets.yaml.
+# Target board: Seeed XIAO ESP32-S3. Test the pins with a loopback first
+# (docs/hardware/cn11-interface.md). Copy secrets.yaml.example to secrets.yaml.
 #
 # Before the first connection: measure CN11 levels (docs/guides/sniffer.md, step 3) and
 # run the sniffer with the ORIGINAL module first (open question O13).
 
 substitutions:
   name: linea-mini
-  tx_pin: GPIO25   # -> CN11 RXD (machine receives), through 300 ohm in series
-  rx_pin: GPIO26   # <- CN11 TXD (machine sends), through 300 ohm in series; 10 kOhm pull-up to 3.3 V
+  tx_pin: GPIO43   # XIAO D6 -> CN11 RXD (machine receives), through 300 ohm in series
+  rx_pin: GPIO44   # XIAO D7 <- CN11 TXD (machine sends); level handling: see the hardware doc
 
 esphome:
   name: ${name}
 
 esp32:
-  board: esp32dev
+  board: seeed_xiao_esp32s3
   framework:
     type: esp-idf
 
 logger:
   level: DEBUG
+  hardware_uart: USB_SERIAL_JTAG   # GPIO43/44 are the default UART0 pins; log over USB-C
   # linea_mini frames at VERBOSE: set `level: VERBOSE` (very chatty while brewing).
 
 api:
@@ -59,6 +60,13 @@ linea_mini:
   # send_probe: false   # skip the boot probe if the machine does not need it (open question O9)
 
 sensor:
+  - platform: wifi_signal   # measure the signal at the final mounting spot (docs/hardware/carrier-board.md)
+    name: "WiFi signal"
+    update_interval: 60s
+    entity_category: diagnostic
+  - platform: uptime
+    name: "Uptime"
+    entity_category: diagnostic
   - platform: linea_mini
     linea_mini_id: machine
     coffee_temperature:

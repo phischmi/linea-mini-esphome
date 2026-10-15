@@ -4,7 +4,7 @@ Ziel: Den Datenverkehr zwischen dem **Original-IoT-Modul** und der GICAR-Platine
 
 Der Sniffer **hört nur zu**. Sein ESP32 sendet nie auf den Bus (kein TX-Pin ist konfiguriert und keiner wird verdrahtet).
 
-Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die Konfiguration `examples/sniffer.yaml` ist mit ESPHome 2026.9.1 geprüft (`esphome config`) und für `esp32dev` (ESP-IDF) fehlerfrei kompiliert; an der Maschine ist sie **noch nicht getestet** (U).
+Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die Konfiguration `examples/sniffer.yaml` ist für das XIAO ESP32-S3 mit ESPHome 2026.9.1 per `esphome config` geprüft; der Firmware-Build für dieses Board ist noch nicht bestätigt (für `esp32dev` war er fehlerfrei). An der Maschine ist sie **noch nicht getestet** (U).
 
 ## 0. Sicherheit zuerst
 - Hinter dem Stecker arbeitet Netzspannungstechnik. **Netzstecker ziehen**, bevor du das Gehäuse öffnest oder etwas ansteckst. Verkabeln nur stromlos.
@@ -15,7 +15,7 @@ Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die
 ## 1. Material
 | Teil | Zweck |
 |---|---|
-| ESP32-Board mit USB (dein vorhandenes; Typ bitte nennen) | Sniffer; versorgt über USB vom Laptop/Rechner |
+| **Seeed XIAO ESP32-S3** (die normale Variante genügt; die „Sense“-Variante mit Kamera ist nicht nötig) mit externer Antenne am U.FL-Anschluss (nach meiner Erinnerung im Lieferumfang, bitte beim Kauf prüfen; Antenne vor dem ersten Einschalten anstecken) | Sniffer; versorgt über USB-C vom Laptop/Rechner |
 | Je 1 kΩ Widerstand, 2 Stück | Strombegrenzung in den beiden Signalleitungen (Schutz, kein Einfluss auf 9600 Baud) |
 | Optional 2 × 10 kΩ | Pull-up nach 3,3 V, nur falls der Pegel zu niedrig ist (Schritt 3) |
 | Dupont-Kabel, Messklemmen oder Mini-Prüfklemmen | Abgriff an CN11 |
@@ -33,13 +33,13 @@ CN11-Pins: **1 GND, 2 RXD, 3 TXD, 4 +12 V**. Die Beschriftung kann bei dir verta
 
 ```
 CN11 Pin 1  GND  ───────────────────────────────┬── ESP32 GND
-CN11 Pin 3  "TXD" (Maschine → Modul) ── 1 kΩ ───┼── ESP32 GPIO25  (Kanal M, rx_pin)
-CN11 Pin 2  "RXD" (Modul → Maschine) ── 1 kΩ ───┴── ESP32 GPIO26  (Kanal B, rx_pin)
+CN11 Pin 3  "TXD" (Maschine → Modul) ── 1 kΩ ───┼── XIAO D7 = GPIO44  (Kanal M, rx_pin)
+CN11 Pin 2  "RXD" (Modul → Maschine) ── 1 kΩ ───┴── XIAO D6 = GPIO43  (Kanal B, rx_pin)
 CN11 Pin 4  +12 V  ── NICHT verbinden
 ESP32 versorgt über USB.   Das Original-Modul bleibt angeschlossen.
 ```
 - **M** = Maschine → Modul (Antworten, Z-Frames), **B** = Modul → Maschine (Polls, Befehle).
-- Die Pins GPIO25/26 gelten für ein klassisches ESP32-DevKit. Bei S3/C3 und Co. andere freie GPIOs wählen (`pin_m`/`pin_b` in der YAML) und keine Strapping-, Flash- oder PSRAM-Pins nehmen.
+- Die Pins D6/D7 (GPIO43/44) sind die beschrifteten TX/RX-Pins des XIAO ESP32-S3. Es sind die Standard-UART0-Pins, deshalb läuft das Log über den USB-C-Anschluss. Dieselben beiden Leitungen bleiben später im Dauerbetrieb dieselben (D6 = ESP-TX → CN11 RXD, D7 = ESP-RX ← CN11 TXD). Pins anderer Boards: `pin_m`/`pin_b` in der YAML ändern und keine Strapping-, Flash-, PSRAM- oder USB-Pins nehmen. Die Pin-Belegung des XIAO stammt aus der ESPHome-Boarddefinition; prüfe sie zusätzlich im Seeed-Pinout.
 - Ob die Pin-Zuordnung stimmt, zeigt später der Log (Schritt 6); Vertauschen ist harmlos.
 
 ## 3. Pegel messen (vor dem ersten Anschluss an den ESP)
@@ -53,16 +53,16 @@ Zwei Wege, beide mit derselben Datei `examples/sniffer.yaml`:
 
 **A) Home Assistant ESPHome-Builder (du hast HA):**
 1. ESPHome-Add-on öffnen → „New device“ → leer anlegen → Inhalt der `sniffer.yaml` einfügen (Pins/Board anpassen).
-2. „Install“ → „Plug into this computer“ (Chrome/Edge, WebSerial), ESP32 per USB einstecken. Beim ersten Mal ist kein WLAN nötig.
+2. „Install“ → „Plug into this computer“ (Chrome/Edge, WebSerial), das XIAO per USB-C einstecken. Wird es nicht erkannt: **BOOT-Taste gedrückt halten**, USB einstecken, Taste loslassen (Bootloader-Modus, laut Seeed-Anleitung). Beim ersten Mal ist kein WLAN nötig.
 3. Logs: im Dialog „Logs“ → „Download logs“ oder Text kopieren und als `sniffer.log` speichern.
 
 **B) Kommandozeile (Linux/macOS/Windows):**
 ```
 pip install esphome
 cd examples
-esphome run sniffer.yaml --device /dev/ttyUSB0 | tee ../sniffer.log
+esphome run sniffer.yaml --device /dev/ttyACM0 | tee ../sniffer.log
 ```
-(`/dev/ttyUSB0` bzw. `COMx` anpassen.) `esphome logs sniffer.yaml --device …` zeigt später wieder nur den Log.
+(Das XIAO meldet sich als nativer USB-Anschluss, unter Linux meist `/dev/ttyACM0`, unter Windows `COMx`. Nach jedem Reset meldet sich der Anschluss neu; die Ausgabe erscheint erst, wenn ein Programm die Schnittstelle geöffnet hat.) `esphome logs sniffer.yaml --device …` zeigt später wieder nur den Log.
 
 Der Sniffer nutzt kein WLAN und keine API. Die Konfiguration protokolliert Datenblöcke, die durch eine Pause von ≥ 15 ms getrennt sind (Frames kommen am Stück, dazwischen liegt eine Lücke). Zeitstempel sind `millis()` des ESP32 in Millisekunden, beide Kanäle auf derselben Uhr.
 

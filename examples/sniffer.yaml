@@ -7,27 +7,33 @@
 # The pin labels on the plug can be swapped (see docs/hardware/cn11-interface.md).
 # If the poll "R40000023DB" shows up on channel M, swap the two GPIOs below.
 #
+# Target board: Seeed XIAO ESP32-S3 (see docs/hardware/cn11-interface.md, "Board and pins").
+#
 # No tx_pin is configured on purpose. Do not wire any ESP32 output to the machine.
-# Output is the USB serial log (115200). No Wi-Fi, no API: nothing else touches the bus timing.
+# Output is the USB serial log. No Wi-Fi, no API: nothing else touches the bus timing.
 
 substitutions:
   name: linea-sniffer
-  # Defaults for a classic ESP32 DevKit. GPIO25/26 are plain GPIOs on WROOM and WROVER.
-  # Other chips (S3, C3, ...): change board and pins, avoid strapping/flash/PSRAM pins.
-  pin_m: GPIO25
-  pin_b: GPIO26
+  # XIAO ESP32-S3: D7 = GPIO44 (RX header pin), D6 = GPIO43 (TX header pin).
+  # Same physical lines as in the later read-only setup (examples/linea_mini_readonly.yaml):
+  #   D7 <- CN11 TXD line (machine -> module)   channel M
+  #   D6 <- CN11 RXD line (module -> machine)   channel B (used as an input here, never driven)
+  # Other boards: change board and pins, avoid strapping/flash/PSRAM/USB pins.
+  pin_m: GPIO44
+  pin_b: GPIO43
 
 esphome:
   name: ${name}
 
 esp32:
-  board: esp32dev
+  board: seeed_xiao_esp32s3
   framework:
     type: esp-idf
 
 logger:
   level: DEBUG
-  baud_rate: 115200
+  # GPIO43/44 are the default UART0 pins, so the log goes over the USB-C port instead.
+  hardware_uart: USB_SERIAL_JTAG
 
 uart:
   - id: uart_m
