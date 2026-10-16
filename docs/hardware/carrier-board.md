@@ -19,7 +19,8 @@ Status: **U** = nicht geprüft / noch zu klären.
 9. **Temperatur:** Einbauort neben dem Boiler messen; Betriebsbereich des XIAO und des Reglers im Datenblatt prüfen (**U**).
 
 ## Offene Punkte
-- **Steckverbinder:** sehr wahrscheinlich TE AMPMODU MOD II, 2,54 mm (Angabe des Nutzers, U). Zwei Möglichkeiten: (a) die Trägerplatine bekommt denselben Steckverbinder wie das Original-Modul, dann passt das **vorhandene Kabel** und das Original-Modul bleibt als Rückfall steckbar; (b) ein eigener Gegenstecker zur CN11-Wanne. Dafür das Kabel an beiden Enden prüfen: Typ, Polzahl, Raster, Kodierung/Polarisation, Tiefe der Wanne. Teilenummern erst nach dem Nachmessen am Original bestimmen, nicht raten.
+- **Steckverbinder (entschieden):** Die Platine bekommt eine **TE AMPMODU MOD II Wanne** (Angabe des Nutzers, Typ U), in die das vorhandene Kabel passt; das Kabel hat an beiden Enden dieselbe Buchse. Die Belegung der Wanne wird so gewählt wie am Original-Modul. Offen: Teilenummer (Polzahl, Bauform stehend/liegend, Kodierung), Maße der Wanne am Original nachmessen und mit dem TE-Datenblatt abgleichen; keine Teilenummer raten.
+- **Pin-Zuordnung:** Am Kabel durchmessen, ob die Adern gerade oder gekreuzt geführt sind; die Belegung der Platinenwanne entspricht dem, was am Modul-Ende des Kabels ankommt.
 - Ergebnis der Pegelmessung (siehe Punkt 3).
 - Einbauort und Platzbedarf in der Maschine, Befestigung.
 - Ergebnis der WLAN-Messung am Einbauort (Sensor `wifi_signal` im Beispiel ergänzen).

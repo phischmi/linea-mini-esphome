@@ -24,13 +24,35 @@ Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die
 | Multimeter | Pegel- und Masse-Messung |
 | Optional USB-Isolator | falls die Masse-Messung es verlangt |
 
-**Abgriff an CN11:** Nach Angabe des Nutzers sind Buchse und Wanne auf den Platinen sehr wahrscheinlich **TE Connectivity AMPMODU MOD II** (2,54 mm Raster, U); für Tests genügen **Dupont-Stecker**. Siehe `docs/hardware/cn11-interface.md`, Abschnitt „Steckverbinder“. Wie du an die Signale kommst, hängt davon ab, was du in der Maschine siehst; ich kenne die Geometrie nicht (U). Mögliche Wege:
-1. **Nur für die Ersatz-Tests (Phase 2), nicht zum Mitschneiden:** Kabel vom Original-Modul abziehen und Dupont-Buchsen direkt auf die Stifte der Wanne stecken. Das Original-Modul ist dann nicht dabei.
-2. **Mitschneiden bei angeschlossenem Modul, Variante Durchschleif-Stück:** ein kleines Zwischenstück (Lochraster), das die Kabelbuchse aufnimmt und selbst auf die Wanne gesteckt wird, mit vier Abgriffsstiften dazwischen. Dafür brauchst du je einen passenden Steckverbinder pro Seite.
-3. **Mitschneiden bei angeschlossenem Modul, Variante Prüfklemmen:** auf der Rückseite der Platine an den Lötstellen der Wanne oder am Kabel mit Mini-Prüfklemmen (Micro-Grabber) abgreifen. Nur bei gezogenem Netzstecker, und nur wenn keine Kurzschlüsse zwischen den Adern möglich sind.
-Nicht mit Nadeln durch die Isolierung stechen.
+**Abgriff an CN11:** Nach Angabe des Nutzers sind Buchsen und Wannen sehr wahrscheinlich **TE Connectivity AMPMODU MOD II** (2,54 mm Raster, U), und das vorhandene Kabel hat **an beiden Enden dieselbe Buchse**. Diese Buchse passt auf eine **4er-Stiftleiste auf dem Breadboard** (Angabe des Nutzers, vor dem Aufbau kurz probieren). Siehe auch `docs/hardware/cn11-interface.md`, Abschnitt „Steckverbinder“.
 
-**Pin 4 (+12 V) bleibt in jedem Fall unbeschaltet.** Er liegt direkt neben TXD; ein verrutschter Dupont-Stecker würde 12 V auf den Eingang legen. Verbinde nur GND, TXD und RXD und messe Pin 1 vorher durch (Maschine aus, Netzstecker gezogen).
+**Vor dem Aufbau (Maschine aus, Netzstecker gezogen):**
+1. **Pin-Zuordnung des Kabels durchmessen.** Welcher Pin am Modul-Ende des Kabels hat Durchgang zu welchem Pin am CN11-Ende? Das Kabel kann gerade (1:1) oder gekreuzt verdrahtet sein. Das könnte auch die beim Autor der Quelle „vertauschten“ TXD/RXD-Beschriftungen erklären (Vermutung, U). Notiere die Zuordnung in `captures/README.md`.
+2. **Orientierung markieren:** Ist die Buchse nicht kodiert, lässt sie sich verdreht aufstecken. Markiere Pin 1 an Kabel und Breadboard.
+3. **Pin 4 (+12 V)** bleibt bei Ersatz-Tests unbeschaltet (siehe unten).
+
+**Aufbau A: Ersatz-Test mit dem XIAO (Phase 2, ohne Original-Modul)**
+```
+Maschine CN11 ── Kabel ── Buchse ──► 4er-Stiftleiste auf dem Breadboard
+      GND  ──────────────────────────► XIAO GND
+      Modulseite RXD (Maschine empfängt) ◄── 300 Ω ◄── XIAO D6 (GPIO43)
+      Modulseite TXD (Maschine sendet)   ──► XIAO D7 (GPIO44)   (Pegel: siehe Schritt 3)
+      +12 V ── nicht anschließen. XIAO bleibt am USB.
+```
+Das Original-Modul ist dabei abgesteckt.
+
+**Aufbau B: Mitschneiden bei angeschlossenem Original-Modul (Durchschleifen)**
+```
+Maschine CN11 ── Kabel ── Buchse ──► Stiftleiste P1 auf dem Breadboard
+Breadboard-Reihen:  GND, TXD, RXD (je eine Reihe), +12 V in eigener Reihe mit Abstand
+Dupont (Buchse) von diesen Reihen ──► Stifte der Wanne am Original-Modul
+Analysator: Klemmen auf die TXD- und RXD-Reihe, GND-Klemme auf die GND-Reihe
+```
+- Der Verkehr läuft über die Breadboard-Reihen; der Analysator hängt nur parallel und treibt nichts.
+- **12 V durchschleifen:** Das Modul bezieht seine Spannung über Pin 4. Führe sie über eine eigene Reihe und eine Dupont-Ader zum Modul, mit Abstand zu den Signalreihen und mit einer **rückstellbaren Sicherung** davor. Den Wert wählst du nach einer Strommessung des Moduls (A-Bereich des Multimeters, U); der Stromverbrauch des Moduls ist mir nicht bekannt.
+- Ein verrutschter Dupont-Stecker an Pin 4 neben TXD wäre das Hauptrisiko. Isoliere die 12-V-Ader und sichere die Verbindungen.
+- Passen die Dupont-Buchsen nicht sauber in die Wanne des Moduls (Kragen, Sitz), wackelt der Aufbau und erzeugt Bitfehler. Dann auf ein zweites Kabel oder eine Durchschleif-Platine ausweichen.
+- Alternativ ohne Eingriff: Mini-Prüfklemmen an den Lötstellen der Wanne auf der Rückseite der Platine (nur bei gezogenem Netzstecker).
 
 ## 2. Schaltung
 CN11-Pins: **1 GND, 2 RXD, 3 TXD, 4 +12 V**. Die Beschriftung kann bei dir vertauscht sein (beim Autor der Quelle war sie es, V). Deshalb heißen die Kanäle im Sniffer nach der Datenrichtung, nicht nach dem Pin:

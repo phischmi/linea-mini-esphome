@@ -14,11 +14,12 @@ CN11 (4 Pins) auf der GICAR-Platine (Bezeichnung laut Quelle: E.1.059). Hier hä
 
 ## Steckverbinder
 - **Angabe des Nutzers:** Buchse und Wanne (Stiftleiste mit Kragen) auf den Platinen sind „sehr wahrscheinlich“ **TE Connectivity AMPMODU MOD II** (U, nicht von mir geprüft; keine meiner Quellen nennt den Typ). Dieser Typ hat nach meinem Wissen 2,54 mm Raster und 0,64 mm Vierkantstifte (U, Maße im TE-Datenblatt und am Original nachmessen).
-- **Für Tests genügen Dupont-Stecker** (Entscheidung des Nutzers): Die Stifte haben das übliche Dupont-Maß (U). Prüfe, ob einzelne Dupont-Gehäuse in den Kragen der Wanne passen und fest sitzen.
+- **Das vorhandene Kabel hat an beiden Enden dieselbe Buchse** (Angabe des Nutzers). Für die Tests steckt die Buchse auf eine **4er-Stiftleiste auf dem Breadboard**; für Dupont-Verbindungen gilt dasselbe Raster (U). Prüfe, ob Buchse und einzelne Dupont-Gehäuse sauber und fest sitzen (Kragen der Wanne).
+- **Pin-Zuordnung des Kabels** (gerade oder gekreuzt) durchmessen und festhalten. Für das Modul-Ende gilt die dort gemessene Nummerierung, nicht die CN11-Nummerierung oben.
 - **Vorsicht, Pin 4 führt +12 V** und liegt direkt neben TXD (Pin 3). Ein verrutschter Dupont-Stecker kann 12 V auf einen ESP-Eingang legen und das Board zerstören. Für Sniffer und lesende Tests wird Pin 4 **nicht angeschlossen**: Nur GND, TXD und RXD verbinden, Pin 4 frei lassen oder abisolieren.
 - **Immer Pin 1 durchmessen**, bevor du etwas verbindest: Durchgang zwischen GND der Platine und dem Pin, den du für GND hältst (Maschine aus, Netzstecker gezogen). Die Beschriftung kann vertauscht sein, und eine Kodierung des Steckers ist nicht gesichert.
 - Dupont-Verbindungen können wackeln und dadurch Bitfehler erzeugen. Für längere Aufnahmen fixieren (Schrumpfschlauch, Kabelbinder, Zugentlastung).
-- **Dauerhaft:** Ob die Trägerplatine denselben Steckverbinder wie das Original-Modul bekommt (damit das vorhandene Kabel weiter passt und das Original-Modul als Rückfall steckbar bleibt) oder einen eigenen Gegenstecker, ist offen; siehe `carrier-board.md`. Dazu muss das Kabel an **beiden** Enden angesehen werden.
+- **Dauerhaft (Entscheidung des Nutzers):** Die Trägerplatine bekommt eine **AMPMODU-MOD-II-Wanne**, in die das vorhandene Kabel gesteckt wird. Die Belegung der Wanne muss der des Original-Moduls entsprechen (am Modul-Ende des Kabels gemessen). So bleibt das Original-Modul als Rückfall durch Umstecken des Kabels jederzeit nutzbar. Details in `carrier-board.md`.
 
 ## Elektrische Eigenschaften
 - Aufdruck/Doku sprechen von „RS-232“, gemessen sind aber 2,5-V-LVCMOS-Pegel (V, Autor). **Kein RS-232-Pegelwandler** (±12 V) anschließen: schädigt die Platine.
