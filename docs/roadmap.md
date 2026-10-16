@@ -14,7 +14,8 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 
 ## Phase 1: Sniffer (passiv)
 - [x] `examples/sniffer.yaml` (zwei Empfangs-UARTs parallel zu CN11, nur lauschen), Anleitung `docs/guides/sniffer.md`, Auswertung `tools/parse_sniffer_log.py`
-- [ ] Sniffer aufbauen und an der Maschine testen (Pegel und Masse zuerst messen)
+- [x] Auswertung für Logikanalysator (PulseView/sigrok VCD): `tools/vcd_to_sniffer_log.py`, Anleitung im Sniffer-Guide
+- [ ] Aufnahmen an der Maschine machen (Analysator bestellt; Pegel und Masse zuerst messen)
 - [ ] Eigene Mitschnitte (zuerst mit Original-Modul, Gateway-FW v7.4.2): Boot, Idle, Brew, Steam, Standby/Wake, Backflush
 - [ ] Offene Fragen O1–O11 mit echten Daten schließen
 - [ ] Pegel an CN11 messen, Loopback-Test

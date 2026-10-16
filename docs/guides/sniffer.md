@@ -1,5 +1,7 @@
 # Anleitung: Sniffer bauen und benutzen
 
+> **Zwei Wege:** (A) mit einem **Logikanalysator und PulseView** (Abschnitt „Variante mit Logikanalysator“ am Ende, vom Nutzer gewählt), (B) mit einem **ESP32** (der Rest dieser Anleitung). Sicherheit (Abschnitt 0), Pegelmessung (3) und die Mitschnitt-Liste (6) gelten für beide.
+
 Ziel: Den Datenverkehr zwischen dem **Original-IoT-Modul** und der GICAR-Platine an CN11 mitschneiden, **ohne** ihn zu stören. Damit schließen wir die offenen Fragen in [`open-questions.md`](../protocol/open-questions.md), vor allem O13 (Gateway-Firmware v7.4.2) und O1–O11.
 
 Der Sniffer **hört nur zu**. Sein ESP32 sendet nie auf den Bus (kein TX-Pin ist konfiguriert und keiner wird verdrahtet).
@@ -110,3 +112,37 @@ Bitte Mitschnitte von **deiner** Maschine, nicht aus dem Referenzrepo. Der Abgle
 ## 8. Danach
 - Logs in `docs/` auswerten, Fixtures ergänzen (`tests/fixtures/`, `python3 -I tools/verify_fixtures.py`), offene Fragen aktualisieren.
 - Erst wenn der Boot-Ablauf mit dem Original-Modul verstanden ist (O13), ersetzen wir das Modul durch den ESP und testen **read-only** (Roadmap Phase 2).
+
+## Variante mit Logikanalysator (PulseView)
+
+Der Analysator (8 Kanäle, FX2-Nachbau eines Saleae Logic) ersetzt den ESP32 als Sniffer. Er hört nur zu; die Auswertung bleibt dieselbe.
+
+### Anschluss
+- **GND-Leitung** an CN11 Pin 1 (Bezug), **Kanal 0** an die Leitung CN11 TXD (Maschine → Modul), **Kanal 1** an CN11 RXD (Modul → Maschine). Welche Ader welche ist, entscheidet am Ende der Poll `R40000023DB` (kommt vom Modul, also Kanal B).
+- Schritt 0 gilt unverändert: **Masse gegen Schutzleiter messen**, im Zweifel USB-Isolator oder Laptop im Akkubetrieb. Der Analysator ist nicht galvanisch getrennt (U, bei Nachbauten nicht anzunehmen).
+- Schritt 3 gilt auch: **Pegel mit dem Multimeter messen**. Der Analysator zeigt nur 0 oder 1. Billig-Nachbauten haben oft eine Eingangsschwelle um 2 V (U); die ca. 2,5 V der Maschine liegen darüber, aber knapp. Erscheint auf einer Leitung nichts oder ständig dasselbe, ist das ein Hinweis auf zu schwaches Signal oder falsche Ader, nicht auf eine tote Maschine.
+
+### Aufnahme in PulseView
+1. Gerät wählen (Treiber `fx2lafw`; unter Windows ggf. mit Zadig den libusb-Treiber zuweisen), **Abtastrate 1 MHz**, Anzahl Abtastwerte so groß, dass die Aufnahme passt (bei 1 MHz sind 100 M Abtastwerte ≈ 100 s).
+2. Zur Kontrolle einen **UART-Dekoder** an Kanal 0 hängen: 9600 Baud, 8 Datenbits, keine Parität, 1 Stoppbit, **„Invert RX“ an**. Im Klartext erscheinen dann `R4000…`-Frames. Das ist nur eine Anzeige, die Auswertung unten braucht den Dekoder nicht.
+3. Aufnahme **vor** der Aktion starten (beim Kaltstart vor dem Einschalten der Maschine) und danach stoppen.
+4. Speichern als `.sr` (Rohdaten, immer zuerst sichern) **und** als VCD exportieren (File → Export; Menüname je nach Version leicht anders, **U**, nicht von mir geprüft). Alternativ auf der Kommandozeile aus der `.sr`: 
+   ```
+   sigrok-cli -i capture.sr -O vcd -o capture.vcd
+   ```
+   (Aufruf mit libsigrok 0.5.2 getestet, mit einer synthetischen Aufnahme.)
+
+### Auswertung
+```
+python3 -I tools/vcd_to_sniffer_log.py capture.vcd -o sniffer.log
+python3 -I tools/parse_sniffer_log.py sniffer.log
+```
+- Der Konverter dekodiert 9600 8N1 **invertiert** selbst aus den Flanken, fasst Bytes mit Pausen unter 15 ms zu Blöcken zusammen und schreibt dasselbe Logformat wie der ESP32-Sniffer. Er nennt am Ende pro Kanal Bytes, Rahmenfehler und die aus den Pulsen geschätzte Baudrate (Erwartung ≈ 9600 bzw. 9615).
+- **Kanalzuordnung:** Ohne Angabe ist das zuerst deklarierte Signal Kanal M und das zweite Kanal B. Die Namen aus PulseView (z. B. `D0`, `D1`) gibst du mit `--machine D0 --module D1` an. Erscheint der Poll auf M, warnt `parse_sniffer_log.py`, dann vertauschst du die beiden Namen.
+- **Warnung „check --baud and --no-invert“** bedeutet: Der Inhalt ist keine druckbare ASCII-Schrift. Dann stimmt die Polarität oder Baudrate nicht, oder der Pegel wird nicht sauber erkannt.
+- Die Zeitstempel sind Millisekunden ab Aufnahmebeginn. Die genauen Pausen zwischen den Bytes stehen im VCD (Flanken) und sind in PulseView direkt messbar.
+
+### Was der Analysator zusätzlich liefert
+- Exakte Zeiten zwischen Poll und Antwort, zwischen Befehl und ACK und zwischen den Bytes (für die Zeitkonstanten in `docs/protocol/sequences.md`).
+- Eine Aufnahme **der Leitungen der Trägerplatine** später (Pegel nach dem Puffer, TX des ESP32), mit demselben Werkzeug.
+
