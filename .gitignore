@@ -13,3 +13,9 @@ __pycache__/
 .DS_Store
 # Local scratch (reference clones live outside the repo; keep it that way)
 ref/
+# Raw logic analyzer captures stay local; only the decoded logs in captures/ are shared
+captures/*.sr
+captures/*.vcd
+*.sr
+*.vcd
+!tests/vcd/*.vcd

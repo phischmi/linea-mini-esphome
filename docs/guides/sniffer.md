@@ -88,14 +88,16 @@ Je Szenario: Sniffer-Start vor der Aktion, Aktion mit ungefährer Uhrzeit notier
 | 13 | **Kalter Start**: Sniffer läuft, *dann* Maschine einschalten | bis ~60 s nach Boot | O13, O9, O10 (Boot-Ablauf, Gateway v7.4.2) |
 | 01 | Idle, nichts tun | 60 s | Takt, Config-Bursts, O13 |
 | 04 | Solltemperatur in der App ändern (z. B. 93 → 94 → 93 °C) | 60 s | Schrittweite, Register 0x0007 |
-| 05/06 | Pre-Infusion in der App auf **mehrere Werte** (z. B. 2, 5, 10, 20) und aus/an | 90 s | O1 (Register, Einheit) |
-| 15 | Leerbezug mit Pre-Infusion (z. B. 3 s), Hebel auf Brew | 30 s | O1, O5 |
+| 05/06 | **Nur im Festwasserbetrieb:** Pre-Infusion in der App auf **mehrere Werte** (z. B. 2, 5, 10, 20) und aus/an | 90 s | O1 (Register, Einheit) |
+| 15 | **Nur im Festwasserbetrieb:** Leerbezug mit Pre-Infusion (z. B. 3 s), Hebel auf Brew | 30 s | O1, O5 |
 | 14 | Leerbezug ohne Pre-Infusion | 30 s | O5, O6 |
 | 02 | Normaler Shot mit Puck | 45 s | O5, O6 |
 | 03/08 | Dampf an/aus in der App, Dampfhahn kurz öffnen | 60 s | Flags |
 | 11/12 | Standby über die App, nach ~20 s Wake, mehrfach | 90 s | O3, O4, O2 |
 | 07 | **Backflush** mit Blindsieb über die App | ~150 s | Reinigungsablauf |
 | 09/10 | Auto-Standby-Zeit und Zeitplan in der App ändern | 60 s | bestätigt: keine Gicar-Kommandos |
+
+**Wasserquelle:** Die Pre-Infusion lässt sich nur im **Festwasserbetrieb** testen (Angabe des Nutzers). Für die Tests 05, 06 und 15 muss die Maschine also am Festwasseranschluss hängen. Notiere bei **jedem** Mitschnitt, ob Tank oder Festwasser aktiv war, denn ob sich Frames oder Register je nach Wasserquelle unterscheiden, ist unbekannt (U, siehe O15). Wenn es sich einrichten lässt, nimm Kaltstart (13) und Leerlauf (01) in **beiden** Betriebsarten auf.
 
 Bitte Mitschnitte von **deiner** Maschine, nicht aus dem Referenzrepo. Der Abgleich mit den Fixtures (`tests/fixtures/`) zeigt, ob deine Maschine identisch spricht (O8).
 
@@ -113,36 +115,75 @@ Bitte Mitschnitte von **deiner** Maschine, nicht aus dem Referenzrepo. Der Abgle
 - Logs in `docs/` auswerten, Fixtures ergänzen (`tests/fixtures/`, `python3 -I tools/verify_fixtures.py`), offene Fragen aktualisieren.
 - Erst wenn der Boot-Ablauf mit dem Original-Modul verstanden ist (O13), ersetzen wir das Modul durch den ESP und testen **read-only** (Roadmap Phase 2).
 
-## Variante mit Logikanalysator (PulseView)
+## Variante mit Logikanalysator (PulseView und sigrok-cli)
 
-Der Analysator (8 Kanäle, FX2-Nachbau eines Saleae Logic) ersetzt den ESP32 als Sniffer. Er hört nur zu; die Auswertung bleibt dieselbe.
+Der Analysator (8 Kanäle, FX2-Nachbau eines Saleae Logic) ersetzt den ESP32 als Sniffer. Er hört nur zu; die Auswertung bleibt dieselbe. Diese Anleitung geht von **PulseView 0.5.0 (Eigenbau) auf einem Apple-Silicon-Mac** aus.
 
-### Anschluss
-- **GND-Leitung** an CN11 Pin 1 (Bezug), **Kanal 0** an die Leitung CN11 TXD (Maschine → Modul), **Kanal 1** an CN11 RXD (Modul → Maschine). Welche Ader welche ist, entscheidet am Ende der Poll `R40000023DB` (kommt vom Modul, also Kanal B).
-- Schritt 0 gilt unverändert: **Masse gegen Schutzleiter messen**, im Zweifel USB-Isolator oder Laptop im Akkubetrieb. Der Analysator ist nicht galvanisch getrennt (U, bei Nachbauten nicht anzunehmen).
-- Schritt 3 gilt auch: **Pegel mit dem Multimeter messen**. Der Analysator zeigt nur 0 oder 1. Billig-Nachbauten haben oft eine Eingangsschwelle um 2 V (U); die ca. 2,5 V der Maschine liegen darüber, aber knapp. Erscheint auf einer Leitung nichts oder ständig dasselbe, ist das ein Hinweis auf zu schwaches Signal oder falsche Ader, nicht auf eine tote Maschine.
+Status der Befehle: Die `sigrok-cli`-Befehle habe ich mit sigrok-cli 0.7.2 und dem `demo`-Treiber ausprobiert (Aufnahme, Umwandlung in VCD, UART-Dekodierung, Auswertung). Den echten FX2-Treiber (`fx2lafw`), PulseView 0.5.0 und macOS konnte ich nicht testen; dort ist alles mit **U** markiert.
 
-### Aufnahme in PulseView
-1. Gerät wählen (Treiber `fx2lafw`; unter Windows ggf. mit Zadig den libusb-Treiber zuweisen), **Abtastrate 1 MHz**, Anzahl Abtastwerte so groß, dass die Aufnahme passt (bei 1 MHz sind 100 M Abtastwerte ≈ 100 s).
-2. Zur Kontrolle einen **UART-Dekoder** an Kanal 0 hängen: 9600 Baud, 8 Datenbits, keine Parität, 1 Stoppbit, **„Invert RX“ an**. Im Klartext erscheinen dann `R4000…`-Frames. Das ist nur eine Anzeige, die Auswertung unten braucht den Dekoder nicht.
-3. Aufnahme **vor** der Aktion starten (beim Kaltstart vor dem Einschalten der Maschine) und danach stoppen.
-4. Speichern als `.sr` (Rohdaten, immer zuerst sichern) **und** als VCD exportieren (File → Export; Menüname je nach Version leicht anders, **U**, nicht von mir geprüft). Alternativ auf der Kommandozeile aus der `.sr`: 
+### 1. Software und Gerät prüfen
+1. **Gleiche Bibliotheken:** PulseView und `sigrok-cli` sollten auf dieselbe libsigrok und libsigrokdecode zeigen. Hast du PulseView selbst gebaut, bau oder installiere `sigrok-cli` aus denselben Quellen (sonst können Treiber- und Dekoder-Versionen abweichen). Ohne eigene `sigrok-cli`: `brew install sigrok-cli` (U, nicht geprüft).
+2. **Firmware:** Der FX2-Nachbau bekommt beim Anstecken die Firmware `fx2lafw` aus dem Paket *sigrok-firmware-fx2lafw* in den Chip geladen. Sie muss in einem Suchpfad der libsigrok liegen (bei Eigenbau meist unter `<prefix>/share/sigrok-firmware`, U).
+3. **Test:** Analysator direkt am Mac anstecken (kein Hub), dann
    ```
-   sigrok-cli -i capture.sr -O vcd -o capture.vcd
+   sigrok-cli --scan
    ```
-   (Aufruf mit libsigrok 0.5.2 getestet, mit einer synthetischen Aufnahme.)
+   Erwartet: eine Zeile mit `fx2lafw` und den Kanälen `D0 … D7`. Fehlt sie, mit `sigrok-cli -l 5 --scan` ausführlich loggen; dort steht, welche Pfade nach Firmware durchsucht werden und ob sie fehlt.
+4. Auf macOS ist kein Zadig-Treiber nötig (libusb, U). Beim Anstecken meldet sich der Chip zuerst mit der Cypress-Kennung und nach dem Firmware-Upload neu als `fx2lafw`; das ist normal.
 
-### Auswertung
+### 2. Anschluss
+- **GND-Leitung** an CN11 Pin 1, **D0** an die Leitung CN11 TXD (Maschine → Modul, Kanal M), **D1** an CN11 RXD (Modul → Maschine, Kanal B). Welche Ader welche ist, entscheidet der Poll `R40000023DB` (kommt vom Modul, also auf B). Vertauschst du sie, merkt das die Auswertung.
+- Schritt 0 gilt unverändert: **Masse gegen Schutzleiter messen**, im Zweifel USB-Isolator oder Laptop im Akkubetrieb. Der Analysator ist nicht galvanisch getrennt (bei Nachbauten nicht anzunehmen, U).
+- Schritt 3 gilt auch: **Pegel mit dem Multimeter messen**. Der Analysator zeigt nur 0 oder 1. Billig-Nachbauten haben oft eine Eingangsschwelle um 2 V (U); die ca. 2,5 V der Maschine liegen darüber, aber knapp. Erscheint auf einer Leitung nichts oder ständig dasselbe, ist das ein Hinweis auf zu schwaches Signal oder die falsche Ader, nicht auf eine tote Maschine.
+
+### 3. Aufnahme mit sigrok-cli (empfohlen, reproduzierbar)
 ```
-python3 -I tools/vcd_to_sniffer_log.py capture.vcd -o sniffer.log
-python3 -I tools/parse_sniffer_log.py sniffer.log
+sigrok-cli --driver fx2lafw --config samplerate=1m --channels D0,D1 --time 90s -o 13_power_on.sr
+```
+- `samplerate=1m` heißt hier **1 MHz** (nicht 1 mHz). Das reicht: Ein Bit dauert bei 9600 Baud rund 104 µs, das sind etwa 100 Abtastwerte pro Bit.
+- `--time 90s` legt die Dauer fest (auch `--time 90000` in Millisekunden oder `--samples 100m`). **Nicht mit Ctrl-C abbrechen:** In meinem Test (Demo-Treiber, sigrok-cli 0.7.2, Dauermodus) blieb nach dem Abbruch keine Datei übrig. Wähle die Dauer lieber etwas länger als nötig.
+- Die Aufnahme beginnt sofort. Beim Kaltstart also erst den Befehl starten und **dann** die Maschine einschalten (~26 s Bootzeit, V laut Mitschnitt der Quelle), Dauer 90 s.
+- Größe: 1 Byte pro Abtastwert, also rund 1 MB pro Sekunde (90 s ≈ 90 MB als `.sr` je nach Kompression deutlich weniger).
+- Die Kanalnamen `D0,D1` bleiben in der Datei und im VCD erhalten.
+
+### 4. Aufnahme in PulseView 0.5.0 (Alternative)
+1. Gerät wählen (Treiber `fx2lafw`), **1 MHz**, Abtastwerte so groß, dass die Aufnahme passt (bei 1 MHz sind 100 M Abtastwerte ≈ 100 s). PulseView hält die Aufnahme im Speicher.
+2. Nur D0 und D1 aktiv lassen.
+3. Zur Kontrolle einen **UART-Dekoder** pro Kanal hinzufügen (Decoder-Auswahl oben): RX = D0 bzw. D1, 9600 Baud, 8 Datenbits, keine Parität, 1 Stoppbit, **„Invert RX“ an**, Datenformat ASCII. Dann erscheinen `R4000…`-Frames im Klartext. Das ist nur eine Anzeige; die Auswertung unten braucht den Dekoder nicht.
+4. Run, nach der Aktion Stop, dann **File → Save As** als `.sr`. Menünamen können in 0.5.0 abweichen (U).
+5. Den VCD-Export brauchst du in PulseView nicht: Die Umwandlung geht mit `sigrok-cli` (nächster Abschnitt).
+
+### 5. Trockenlauf (vor jeder Messreihe)
+Kurze Aufnahme von 10 s bei laufender Maschine im Leerlauf und ansehen:
+```
+sigrok-cli --driver fx2lafw --config samplerate=1m --channels D0,D1 --time 10s -o test.sr
+sigrok-cli -i test.sr -P uart:rx=D1:baudrate=9600:invert_rx=yes:format=ascii -A uart=rx-data | sed 's/^uart-1: //' | tr -d '\n'; echo
+```
+Erwartet: auf D1 ein Strom `R40000023DBR40000023DB…`, rund 13 Polls in 10 s (alle 760 ms, V). Mit `rx=D0` siehst du die Antworten der Maschine (`R4000002303D4…`, 81 Zeichen). Kommt auf D0 der Poll statt auf D1, sind die Adern vertauscht.
+
+### 6. Auswertung
+```
+sigrok-cli -i 13_power_on.sr -O vcd -o 13_power_on.vcd
+python3 -I tools/vcd_to_sniffer_log.py 13_power_on.vcd --machine D0 --module D1 -o 13_power_on.log
+python3 -I tools/parse_sniffer_log.py 13_power_on.log
 ```
 - Der Konverter dekodiert 9600 8N1 **invertiert** selbst aus den Flanken, fasst Bytes mit Pausen unter 15 ms zu Blöcken zusammen und schreibt dasselbe Logformat wie der ESP32-Sniffer. Er nennt am Ende pro Kanal Bytes, Rahmenfehler und die aus den Pulsen geschätzte Baudrate (Erwartung ≈ 9600 bzw. 9615).
-- **Kanalzuordnung:** Ohne Angabe ist das zuerst deklarierte Signal Kanal M und das zweite Kanal B. Die Namen aus PulseView (z. B. `D0`, `D1`) gibst du mit `--machine D0 --module D1` an. Erscheint der Poll auf M, warnt `parse_sniffer_log.py`, dann vertauschst du die beiden Namen.
 - **Warnung „check --baud and --no-invert“** bedeutet: Der Inhalt ist keine druckbare ASCII-Schrift. Dann stimmt die Polarität oder Baudrate nicht, oder der Pegel wird nicht sauber erkannt.
+- Erscheint der Poll auf M, warnt `parse_sniffer_log.py`: `--machine` und `--module` tauschen.
 - Die Zeitstempel sind Millisekunden ab Aufnahmebeginn. Die genauen Pausen zwischen den Bytes stehen im VCD (Flanken) und sind in PulseView direkt messbar.
 
-### Was der Analysator zusätzlich liefert
+### 7. Aufnahmen weitergeben
+Ich kann nur lesen, was im Repo liegt. Lege die **Logs** (`NN_name.log`) unter `captures/` ab, committe und pushe sie. Rohdaten (`.sr`, `.vcd`) bleiben bei dir und sind per `.gitignore` ausgeschlossen. Notiere zu jeder Aufnahme in `captures/README.md`: Datum und Uhrzeit, Szenario, **Wasserquelle (Tank oder Festwasser)**, Firmware-Stände, Solltemperatur und die Aktionen mit ungefährer Uhrzeit.
+
+### 8. Was der Analysator zusätzlich liefert
 - Exakte Zeiten zwischen Poll und Antwort, zwischen Befehl und ACK und zwischen den Bytes (für die Zeitkonstanten in `docs/protocol/sequences.md`).
 - Eine Aufnahme **der Leitungen der Trägerplatine** später (Pegel nach dem Puffer, TX des ESP32), mit demselben Werkzeug.
 
+### 9. Fehlersuche (Analysator)
+| Symptom | Ursache / Maßnahme |
+|---|---|
+| `--scan` findet nichts | Kabel/Hub; `-l 5` zeigt, ob die Firmware fehlt oder USB nicht ansprechbar ist |
+| Aufnahme leer oder nur Nullen | GND fehlt, falsche Ader oder Pegel unter der Eingangsschwelle (Multimeter, Schritt 3) |
+| Datei fehlt nach der Aufnahme | Mit Ctrl-C abgebrochen; feste Dauer mit `--time` verwenden |
+| Viele Rahmenfehler | Polarität oder Baudrate falsch (Dekoder: invertiert, 9600) |
+| Poll auf M statt B | Adern vertauscht, `--machine`/`--module` tauschen |

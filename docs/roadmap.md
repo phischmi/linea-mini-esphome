@@ -31,7 +31,7 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 - [ ] Solltemperatur 0x0007 (Grenzen 88–96 °C laut Quelle, Schritt prüfen)
 - [ ] Dampf an/aus 0x00E1
 - [ ] Standby/Wake 0x0000 inkl. Dampf-Wiederherstellung
-- [ ] Pre-Infusion (erst Einheit klären)
+- [ ] Pre-Infusion (erst Einheit klären; Test nur im Festwasserbetrieb möglich, O15)
 
 ## Phase 4: Reinigung und Brew-Stop
 - [ ] Backflush: 6 Pulse, dann Poll auf ~10 s
