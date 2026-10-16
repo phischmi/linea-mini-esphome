@@ -12,6 +12,14 @@ CN11 (4 Pins) auf der GICAR-Platine (Bezeichnung laut Quelle: E.1.059). Hier hä
 | 3 | TXD (Maschine sendet) | Maschine → Gateway | ca. 2,5 V LVCMOS | V (Autor), U (eigene Messung) |
 | 4 | +12 V | Maschine → Gateway | 12 V | V (Autor) |
 
+## Steckverbinder
+- **Angabe des Nutzers:** Buchse und Wanne (Stiftleiste mit Kragen) auf den Platinen sind „sehr wahrscheinlich“ **TE Connectivity AMPMODU MOD II** (U, nicht von mir geprüft; keine meiner Quellen nennt den Typ). Dieser Typ hat nach meinem Wissen 2,54 mm Raster und 0,64 mm Vierkantstifte (U, Maße im TE-Datenblatt und am Original nachmessen).
+- **Für Tests genügen Dupont-Stecker** (Entscheidung des Nutzers): Die Stifte haben das übliche Dupont-Maß (U). Prüfe, ob einzelne Dupont-Gehäuse in den Kragen der Wanne passen und fest sitzen.
+- **Vorsicht, Pin 4 führt +12 V** und liegt direkt neben TXD (Pin 3). Ein verrutschter Dupont-Stecker kann 12 V auf einen ESP-Eingang legen und das Board zerstören. Für Sniffer und lesende Tests wird Pin 4 **nicht angeschlossen**: Nur GND, TXD und RXD verbinden, Pin 4 frei lassen oder abisolieren.
+- **Immer Pin 1 durchmessen**, bevor du etwas verbindest: Durchgang zwischen GND der Platine und dem Pin, den du für GND hältst (Maschine aus, Netzstecker gezogen). Die Beschriftung kann vertauscht sein, und eine Kodierung des Steckers ist nicht gesichert.
+- Dupont-Verbindungen können wackeln und dadurch Bitfehler erzeugen. Für längere Aufnahmen fixieren (Schrumpfschlauch, Kabelbinder, Zugentlastung).
+- **Dauerhaft:** Ob die Trägerplatine denselben Steckverbinder wie das Original-Modul bekommt (damit das vorhandene Kabel weiter passt und das Original-Modul als Rückfall steckbar bleibt) oder einen eigenen Gegenstecker, ist offen; siehe `carrier-board.md`. Dazu muss das Kabel an **beiden** Enden angesehen werden.
+
 ## Elektrische Eigenschaften
 - Aufdruck/Doku sprechen von „RS-232“, gemessen sind aber 2,5-V-LVCMOS-Pegel (V, Autor). **Kein RS-232-Pegelwandler** (±12 V) anschließen: schädigt die Platine.
 - Leitungen sind **idle-low**; die UART muss rx und tx **invertieren** (V: ohne Inversion nur Rauschen, mit Inversion saubere Frames).

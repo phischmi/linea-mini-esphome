@@ -9,7 +9,7 @@ Jede Phase endet mit einem Review durch den Nutzer. Writes erst ab Phase 2 und n
 - [x] Lizenz: GPL-3.0
 - [x] MQTT-Broker vorhanden (Mosquitto in Home Assistant)
 - [x] Board: **Seeed XIAO ESP32-S3** (Entscheidung des Nutzers), Pins D6 (TX, GPIO43) / D7 (RX, GPIO44)
-- [ ] CN11-Gegenstecker noch zu besorgen
+- [ ] CN11-Steckverbinder klären (vermutlich TE AMPMODU MOD II, 2,54 mm; Tests mit Dupont; Kabel an beiden Enden prüfen)
 - [ ] Trägerplatine: Entwurf nach Sniffer-Test und Pegelmessung (`docs/hardware/carrier-board.md`)
 
 ## Phase 1: Sniffer (passiv)

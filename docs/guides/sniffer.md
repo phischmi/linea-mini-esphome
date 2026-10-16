@@ -24,11 +24,13 @@ Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die
 | Multimeter | Pegel- und Masse-Messung |
 | Optional USB-Isolator | falls die Masse-Messung es verlangt |
 
-**Abgriff an CN11:** Welcher Steckertyp CN11 ist, steht in keiner meiner Quellen (U). Er ist unter dem Original-Modul zu sehen. Mögliche Wege, vom besten zum schlechtesten:
-1. **Y-Adapter**, sobald du zwei passende Gegenstecker hast (du brauchst ohnehin einen für den späteren Dauerbetrieb): ein Stecker zur Platine, einer zum Modul, Abgriff in der Mitte.
-2. Die vier Adern zwischen Modul und Platine **am Kabel abgreifen** (Prüfklemmen/Abisolieren nur bei gezogenem Netzstecker), ohne den Kontakt zu unterbrechen.
-3. Am Modul-Stecker die Pins von oben abgreifen, falls zugänglich.
-Nicht mit Nadeln durch die Isolierung stechen, wenn dadurch Kurzschlüsse zwischen Adern möglich sind.
+**Abgriff an CN11:** Nach Angabe des Nutzers sind Buchse und Wanne auf den Platinen sehr wahrscheinlich **TE Connectivity AMPMODU MOD II** (2,54 mm Raster, U); für Tests genügen **Dupont-Stecker**. Siehe `docs/hardware/cn11-interface.md`, Abschnitt „Steckverbinder“. Wie du an die Signale kommst, hängt davon ab, was du in der Maschine siehst; ich kenne die Geometrie nicht (U). Mögliche Wege:
+1. **Nur für die Ersatz-Tests (Phase 2), nicht zum Mitschneiden:** Kabel vom Original-Modul abziehen und Dupont-Buchsen direkt auf die Stifte der Wanne stecken. Das Original-Modul ist dann nicht dabei.
+2. **Mitschneiden bei angeschlossenem Modul, Variante Durchschleif-Stück:** ein kleines Zwischenstück (Lochraster), das die Kabelbuchse aufnimmt und selbst auf die Wanne gesteckt wird, mit vier Abgriffsstiften dazwischen. Dafür brauchst du je einen passenden Steckverbinder pro Seite.
+3. **Mitschneiden bei angeschlossenem Modul, Variante Prüfklemmen:** auf der Rückseite der Platine an den Lötstellen der Wanne oder am Kabel mit Mini-Prüfklemmen (Micro-Grabber) abgreifen. Nur bei gezogenem Netzstecker, und nur wenn keine Kurzschlüsse zwischen den Adern möglich sind.
+Nicht mit Nadeln durch die Isolierung stechen.
+
+**Pin 4 (+12 V) bleibt in jedem Fall unbeschaltet.** Er liegt direkt neben TXD; ein verrutschter Dupont-Stecker würde 12 V auf den Eingang legen. Verbinde nur GND, TXD und RXD und messe Pin 1 vorher durch (Maschine aus, Netzstecker gezogen).
 
 ## 2. Schaltung
 CN11-Pins: **1 GND, 2 RXD, 3 TXD, 4 +12 V**. Die Beschriftung kann bei dir vertauscht sein (beim Autor der Quelle war sie es, V). Deshalb heißen die Kanäle im Sniffer nach der Datenrichtung, nicht nach dem Pin:
