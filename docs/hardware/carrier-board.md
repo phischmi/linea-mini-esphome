@@ -4,6 +4,7 @@ Die Platine nimmt das **Seeed XIAO ESP32-S3** auf und sitzt in der Maschine am C
 Status: **U** = nicht geprüft / noch zu klären.
 
 ## Entscheidungen
+- **Drop-in-Gedanke (Vorschlag, aus den Fotos des Original-Moduls, siehe `original-module.md`):** Umriss, die vier Befestigungspunkte und die Lage des 4-poligen Anschlusses (CN4 am Original) des Original-Moduls übernehmen, damit die Platine an derselben Stelle sitzt. Maße mit dem Messschieber bestimmen.
 - Das XIAO wird aufgesteckt oder aufgelötet (Lötfahnen und Pins, laut Hersteller; **U**, Footprint und Maße im Seeed-Datenblatt prüfen, ggf. KiCad-Bibliothek von Seeed verwenden).
 - Programmierung per USB-C am XIAO; Zugang von außen über ein Kabel oder OTA (offen).
 
