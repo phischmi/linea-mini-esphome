@@ -21,6 +21,7 @@ Status: **U** = nicht geprüft / noch zu klären.
 
 ## Offene Punkte
 - **Steckverbinder (entschieden):** Die Platine bekommt eine **TE AMPMODU MOD II Wanne** (Angabe des Nutzers, Typ U), in die das vorhandene Kabel passt; das Kabel hat an beiden Enden dieselbe Buchse. Die Belegung der Wanne wird so gewählt wie am Original-Modul. Offen: Teilenummer (Polzahl, Bauform stehend/liegend, Kodierung), Maße der Wanne am Original nachmessen und mit dem TE-Datenblatt abgleichen; keine Teilenummer raten.
+- **Verpolschutz:** Die Kabelbuchse ist unkodiert und lässt sich verdreht aufstecken (so geschehen beim Original). Das Original schützt sich mit einer Diode in Reihe im Eingang (U). Die Trägerplatine bekommt ebenfalls einen Verpolschutz (Diode in Reihe oder idealer Verpolschutz mit P-MOSFET) und eine gut sichtbare Pin-1-Markierung (+12 V an Pin 4, GND an Pin 1). Auch die Signalleitungen müssen eine falsche Orientierung überstehen (Serienwiderstände, Schutzdioden).
 - **Pin-Zuordnung:** Am Kabel durchmessen, ob die Adern gerade oder gekreuzt geführt sind; die Belegung der Platinenwanne entspricht dem, was am Modul-Ende des Kabels ankommt.
 - Ergebnis der Pegelmessung (siehe Punkt 3).
 - Einbauort und Platzbedarf in der Maschine, Befestigung.

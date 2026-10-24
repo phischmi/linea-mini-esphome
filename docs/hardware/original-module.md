@@ -45,21 +45,6 @@ Aufdrucke der drei SOT-23-6-ICs, der Transistoren „WG3“ und aller Widerstän
 | Auf den Fotos sind **keine Brand- oder Bruchspuren** zu erkennen (Auflösung begrenzt) | V (Foto), nicht belastbar |
 | Das Foto zeigt, dass im Gerät der **Netzanschluss** (grüner Klemmenblock) offen zugänglich ist | V (Foto) |
 
-## Fehlersuche: Modul bleibt dunkel (LD1 „3V3“ und alle LEDs aus)
-Stand 2026-10-24: Der Nutzer hat an allen Steckerpins den Durchgang zur Platine geprüft (Lötstellen in Ordnung). Dennoch leuchten keine LEDs, und die Maschine ist nicht erreichbar. LD1 „3V3“ sollte bei vorhandener Versorgung dauernd leuchten (U), die anderen LEDs erst im Betrieb. Dunkel heißt also sehr wahrscheinlich: **keine 3,3 V**.
-
-Prüfreihenfolge (Maschine **aus**, Netzstecker gezogen, solange du Hand anlegst):
-1. **Sichtprüfung** mit Lupe oder Makrofoto: Tantal-Kondensator, große schwarze Dioden, Regler-IC, Spule, Lötstellen am Modul.
-2. **Kabel stromlos prüfen:** Jede Ader End-zu-End durchklingeln (Zuordnung notieren), Isolation zwischen allen Adern (kein Durchgang), Aderzahl und belegte Kontakte notieren.
-3. **Widerstand der 3,3-V-Schiene:** an den Anschlüssen des orangen Tantal-Kondensators (vermutlich Ausgangskondensator) gegen die Gegenseite messen. Ein Kurzschluss (wenige Ohm, nicht ansteigend) deutet auf einen defekten Kondensator, Regler oder ESP32.
-4. **Spannung am Anschluss CN4** (Maschine an, Platine fixiert, isolierte Klemmleitungen): 12 V zwischen zwei Pins? Wenn nein, liegt es an Kabel, Stecker oder Hauptplatine. Wenn ja, weiter am Modul.
-5. **Spannung entlang des Eingangs:** an beiden Seiten der großen schwarzen Dioden und am Eingangspin des Reglers (laut Datenblatt Pin 2 VIN, vor der Messung gegen das TPS54331-Datenblatt prüfen).
-6. **Ausgang des Reglers:** am Tantal-Kondensator, erwartet 3,3 V. Die markierte Seite ist bei Tantal meist Plus; ein negatives Vorzeichen am Multimeter ist ungefährlich.
-7. **Bank-Test** (Modul außerhalb der Maschine): Spannungsversorgung 12 V mit Strombegrenzung (ca. 200 mA) an CN4, **nach geklärter Polung**. Strom in Reihe messen: Ein gesundes Modul zieht vermutlich grob 50–150 mA (U); null oder ein ansteigender Strom zeigen einen Fehler.
-Auswertung: 12 V am CN4, aber keine 3,3 V → Regler oder Last defekt. Keine 12 V am CN4 → Kabel, Stecker, Hauptplatine oder Verpolung. 12 V und 3,3 V vorhanden, aber LEDs aus → LEDs prüfen (sie leuchten vielleicht nur im Betrieb), Reset/Boot des ESP32 (Boot-Log über IC9, nur nach Prüfung der Belegung).
-
-Sicherheit: Das Foto zeigt den offenen Netzanschluss. Handarbeit nur bei gezogenem Netzstecker. Für Messungen unter Spannung die Platine fixieren (nicht in der Hand halten), isolierte Klemmleitungen verwenden, eine Hand am Messgerät, und Abstand zum Klemmenblock halten. Pin 4 (+12 V) liegt beim Abgreifen neben den Signalpins: Ein Kurzschluss kann 12 V auf die UART-Leitungen der **Hauptplatine** legen und diese beschädigen.
-
 ## CN4 und CN3: Aufdruck und Pin-Identifikation (Nahaufnahme 2026-10-24)
 Beobachtung (Foto der Oberseite, Lötaugen von CN3 und CN4):
 - **Kein Klartext** wie „12V“ oder „GND“ am Anschluss. Der Aufdruck liefert keine Polarität.
@@ -68,25 +53,9 @@ Beobachtung (Foto der Oberseite, Lötaugen von CN3 und CN4):
 - Neben den Anschlüssen liegen **zwei große MELF-Dioden** mit weißem Ring auf der rechten Seite. Der Ring markiert die Kathode, die Stromrichtung zeigt also von den Anschlüssen zum Regler. Das spricht für eine Diode in der Versorgung (Verpolungsschutz oder ODER-Verknüpfung der Einspeisung von CN3 und CN4, U).
 - Zwei kleine SOT-23-Transistoren sitzen direkt unter den CN4-Lötaugen, je mit mehreren kleinen Widerständen und einem 4,7-kΩ-Widerstand („472“) in der Nähe. Das sieht nach **einer Transistorstufe je Datenleitung** aus (Pegelanpassung für TXD und RXD, U).
 
-Pin-Identifikation ohne Spannung (Netzstecker gezogen, Kabel und Modul getrennt):
-1. **GND:** Durchgang zum Abschirmblech des ESP32-Moduls und zum unmarkierten Anschluss des Tantal-Kondensators. Das Lötauge von CN4 mit Durchgang (nahe 0 Ω) ist GND (U, Abschirmblech und Kondensatorseite vorher gegeneinander prüfen).
-2. **+12 V:** Durchgang vom Lötauge zum linken Ende (Anode) einer der großen Dioden. Das ist der Versorgungspin, falls die Diode in der +12-V-Leitung liegt (U).
-3. **Signalleitungen:** die beiden übrigen Lötaugen von CN4, an denen die Transistorstufen hängen.
-Mit Spannung (Maschine an, Platine fixiert): an den **Diodenenden** messen, statt an den Lötaugen. Anode ≈ 12 V, Kathode etwa 0,3–0,7 V darunter, wenn die Diode leitet. So kann ein ausrutschender Messfinger keine Signalleitung treffen.
-
-## Messprotokoll des Nutzers (Original-Modul)
-| Datum | Messung | Bedingung | Ergebnis | Aussage |
-|---|---|---|---|---|
-| 2026-10-24 | „GND gegen 3V3“, Anzeige „−.338 V“ (DC) | **ohne Spannung** (vom Nutzer bestätigt) | Lesart −0,338 V oder −3,38 V unklar | **keine** (stromlos, Restladung/Messrauschen) |
-| 2026-10-24 | Durchgang vom CN4-Lötauge mit quadratischer Umrandung zum Ende **ohne Ring** der oberen großen Diode | stromlos | ja | Das Lötauge ist sehr wahrscheinlich der **Versorgungseingang (+12 V)**; die Diode liegt dann in Reihe (Anode am Eingang, Kathode zum Regler). **Nicht unter Spannung bestätigt (U)** |
-
-Korrigierte Folgerung (Nutzer hat GND am Pin mit dem Aufdruck „1“ gemessen): **CN4 Pin 1 (Aufdruck „1“) = GND**, das gegenüberliegende Lötauge mit der quadratischen Umrandung (**Pin 4**) = **+12 V** (aus Durchgang zur Diodenanode abgeleitet, nicht unter Spannung bestätigt, U). Das passt zur CN11-Nummerierung der Quelle (1 GND, 4 +12 V); das Kabel ist dann vermutlich 1:1 verdrahtet (U, Durchklingeln steht aus). Die quadratische Umrandung markiert hier also **nicht** Pin 1. Die frühere Vermutung eines gespiegelten Kabels ist damit überholt.
-
-### Bank-Test mit externem 12-V-Netzteil (empfohlen, ohne Netzspannung der Maschine)
-Das Modul braucht nur 12 V Gleichspannung. Ein externes Netzteil vermeidet jeden Kontakt mit dem offenen Netzteil der Maschine.
-1. **Stromlos prüfen:** Die Diode in Reihe bestätigen (Diodentest: Rot an das Ende ohne Ring, Schwarz an das Ende mit Ring ergibt 0,2 bis 0,7 V). Durchgang vom **Ende mit Ring** zum Eingangspin des Reglers (laut Datenblatt Pin 2 VIN, Datenblatt vorher prüfen) und zu den Keramikkondensatoren dort. GND-Lötauge von CN4 über Durchgang zum Abschirmblech des ESP32 finden. Widerstand 3V3 gegen GND am orangen Tantal-Kondensator: Ein Kurzschluss (wenige Ohm, nicht ansteigend) → nicht einschalten.
-2. **Strombegrenzung:** Labornetzteil auf 12 V und 200 mA. Ohne Labornetzteil ein kleines 12-V-Steckernetzteil (höchstens etwa 0,5 A) mit einer flinken Sicherung 250 mA in Reihe oder einer 12-V-Glühlampe (z. B. 5 W) als Strombegrenzer in Reihe.
-3. **Anschließen:** Plus an das **Quadrat-Lötauge**, Minus an das GND-Lötauge. Das Modul liegt auf einer isolierenden Unterlage, keine Metallflächen darunter.
-4. **Messen:** Strom (mA, in Reihe), Spannung an der Kathode der Diode (≈ 11,3–11,7 V erwartet), am Reglereingang, am Tantal-Kondensator (3,3 V erwartet), LD1 beobachten.
-Auswertung: kein Strom und keine Spannung hinter der Diode → Diode oder Pfad unterbrochen. Strom grob 50–150 mA und 3,3 V → Modul lebt (LEDs prüfen, Boot-Log). Hoher Strom oder einbrechendes Netzteil → Kurzschluss (Tantal-Kondensator oder ESP32), sofort abschalten.
+## CN4-Belegung am Original-Modul (Stand: Modul läuft wieder)
+- **Pin 1 (Aufdruck „1“) = GND**, vom Nutzer gemessen.
+- **Pin 4 (gegenüber, quadratisch umrandet) = +12 V.** Das Lötauge hat Durchgang zur Anode der oberen großen Diode, und das Modul läuft, wenn das Kabel so aufgesteckt ist, dass +12 V an diesem Pin liegt. Das entspricht der CN11-Nummerierung der Quelle; das Kabel ist vermutlich 1:1 verdrahtet (U). Pins 2 und 3 sind die Signalleitungen, ihre Zuordnung ist offen.
+- Die quadratische Umrandung markiert **nicht** Pin 1.
+- **Die Kabelbuchse ist nicht kodiert** und ließ sich verdreht aufstecken (Nutzer: so war das Modul zunächst dunkel). Dabei ist offenbar nichts kaputtgegangen; die Diode in Reihe im Eingang sperrt die falsche Polung (U). Die Trägerplatine braucht deshalb einen **Verpolschutz** und eine eindeutige Pin-1-Markierung (siehe `carrier-board.md`).
 
