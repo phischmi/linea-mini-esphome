@@ -33,3 +33,30 @@ Quelle: zwei Fotos der Platine (Oberseite und Unterseite), vom Nutzer aufgenomme
 
 ## Nicht lesbar auf den Fotos
 Aufdrucke der drei SOT-23-6-ICs, der Transistoren „WG3“ und aller Widerstände (zu klein oder zu unscharf), der genaue Modultyp (Aufkleber verdeckt), Bauform der Steckverbinder (stehend oder liegend) und die Pin-Reihenfolge von CN3/CN4. Für diese Punkte siehe die Fotowünsche in `open-questions.md` (O16).
+
+## Zweite Fotoserie (2026-10-24, Modul ausgebaut, in der Maschine fotografiert)
+| Beobachtung | Status |
+|---|---|
+| Das Kabel führt an einen **schwarzen Stecker mit grünem Aufkleber** (teilweise lesbar, u. a. „211652“). Ich zähle auf dem Foto **etwa sechs** weiße Adern, nicht vier. Wie viele Kontakte der Stecker hat und welche Adern belegt sind, ist offen | Aderzahl: U |
+| Der **weiße Stecker (CN3)** der Platine hat kein Kabel eingesteckt | V (Foto) |
+| Die drei Stifte am Rand (**IC9**) sitzen auf der Rückseite und sind mit **Klebeband** abgedeckt; auf der Oberseite sind es drei Lötaugen (eines quadratisch). Vermutlich eine kleine serielle Debug- oder Programmierleiste (GND/TX/RX), denn ihre Leiterbahnen laufen zu den Pads der Modulkante, an der beim ESP32-WROOM die UART0-Pins liegen | U |
+| **P1–P3** sind drei 2-polige Stiftreihen **ohne aufgesteckte Jumper** | V (Foto) |
+| Neben der Platine ist im Gerät ein Aufkleber auf der Hauptplatine zu sehen, teilweise lesbar: „**NEWMIL … v.2.08D … 20/11/20**“. Der Nutzer nannte v2.12 (vermutlich App-Anzeige). Beides kann verschiedene Stände meinen | teilweise lesbar, U |
+| Auf den Fotos sind **keine Brand- oder Bruchspuren** zu erkennen (Auflösung begrenzt) | V (Foto), nicht belastbar |
+| Das Foto zeigt, dass im Gerät der **Netzanschluss** (grüner Klemmenblock) offen zugänglich ist | V (Foto) |
+
+## Fehlersuche: Modul bleibt dunkel (LD1 „3V3“ und alle LEDs aus)
+Stand 2026-10-24: Der Nutzer hat an allen Steckerpins den Durchgang zur Platine geprüft (Lötstellen in Ordnung). Dennoch leuchten keine LEDs, und die Maschine ist nicht erreichbar. LD1 „3V3“ sollte bei vorhandener Versorgung dauernd leuchten (U), die anderen LEDs erst im Betrieb. Dunkel heißt also sehr wahrscheinlich: **keine 3,3 V**.
+
+Prüfreihenfolge (Maschine **aus**, Netzstecker gezogen, solange du Hand anlegst):
+1. **Sichtprüfung** mit Lupe oder Makrofoto: Tantal-Kondensator, große schwarze Dioden, Regler-IC, Spule, Lötstellen am Modul.
+2. **Kabel stromlos prüfen:** Jede Ader End-zu-End durchklingeln (Zuordnung notieren), Isolation zwischen allen Adern (kein Durchgang), Aderzahl und belegte Kontakte notieren.
+3. **Widerstand der 3,3-V-Schiene:** an den Anschlüssen des orangen Tantal-Kondensators (vermutlich Ausgangskondensator) gegen die Gegenseite messen. Ein Kurzschluss (wenige Ohm, nicht ansteigend) deutet auf einen defekten Kondensator, Regler oder ESP32.
+4. **Spannung am Anschluss CN4** (Maschine an, Platine fixiert, isolierte Klemmleitungen): 12 V zwischen zwei Pins? Wenn nein, liegt es an Kabel, Stecker oder Hauptplatine. Wenn ja, weiter am Modul.
+5. **Spannung entlang des Eingangs:** an beiden Seiten der großen schwarzen Dioden und am Eingangspin des Reglers (laut Datenblatt Pin 2 VIN, vor der Messung gegen das TPS54331-Datenblatt prüfen).
+6. **Ausgang des Reglers:** am Tantal-Kondensator, erwartet 3,3 V. Die markierte Seite ist bei Tantal meist Plus; ein negatives Vorzeichen am Multimeter ist ungefährlich.
+7. **Bank-Test** (Modul außerhalb der Maschine): Spannungsversorgung 12 V mit Strombegrenzung (ca. 200 mA) an CN4, **nach geklärter Polung**. Strom in Reihe messen: Ein gesundes Modul zieht vermutlich grob 50–150 mA (U); null oder ein ansteigender Strom zeigen einen Fehler.
+Auswertung: 12 V am CN4, aber keine 3,3 V → Regler oder Last defekt. Keine 12 V am CN4 → Kabel, Stecker, Hauptplatine oder Verpolung. 12 V und 3,3 V vorhanden, aber LEDs aus → LEDs prüfen (sie leuchten vielleicht nur im Betrieb), Reset/Boot des ESP32 (Boot-Log über IC9, nur nach Prüfung der Belegung).
+
+Sicherheit: Das Foto zeigt den offenen Netzanschluss. Handarbeit nur bei gezogenem Netzstecker. Für Messungen unter Spannung die Platine fixieren (nicht in der Hand halten), isolierte Klemmleitungen verwenden, eine Hand am Messgerät, und Abstand zum Klemmenblock halten. Pin 4 (+12 V) liegt beim Abgreifen neben den Signalpins: Ein Kurzschluss kann 12 V auf die UART-Leitungen der **Hauptplatine** legen und diese beschädigen.
+

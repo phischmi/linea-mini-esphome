@@ -26,6 +26,8 @@ Status der Angaben: **V** verifiziert, **U** unverifiziert/selbst zu messen. Die
 
 **Abgriff an CN11:** Nach Angabe des Nutzers sind Buchsen und Wannen sehr wahrscheinlich **TE Connectivity AMPMODU MOD II** (2,54 mm Raster, U), und das vorhandene Kabel hat **an beiden Enden dieselbe Buchse**. Diese Buchse passt auf eine **4er-Stiftleiste auf dem Breadboard** (Angabe des Nutzers, vor dem Aufbau kurz probieren). Siehe auch `docs/hardware/cn11-interface.md`, Abschnitt „Steckverbinder“.
 
+**Verpolungs- und Spannungsprüfung (zwingend, bevor das XIAO oder der Analysator angeschlossen wird):** Ist die Kabelbuchse nicht kodiert, lässt sie sich verdreht aufstecken, und dann liegt an einem anderen Pin die +12 V an. Stecke das Kabel zuerst nur auf die Stiftleiste, schalte die Maschine ein, und messe mit dem Multimeter (DC) alle vier Pins gegen den GND-Pin: Auf **genau einem** Pin müssen etwa 12 V liegen, die Signalpins höchstens wenige Volt. Erst dann verbindest du GND, TXD und RXD mit dem XIAO. Das XIAO verträgt an seinen Eingängen nur 3,3 V. Miss mit isolierten Klemmleitungen und lege die Leitungen so, dass nichts verrutschen kann.
+
 **Vor dem Aufbau (Maschine aus, Netzstecker gezogen):**
 1. **Pin-Zuordnung des Kabels durchmessen.** Welcher Pin am Modul-Ende des Kabels hat Durchgang zu welchem Pin am CN11-Ende? Das Kabel kann gerade (1:1) oder gekreuzt verdrahtet sein. Das könnte auch die beim Autor der Quelle „vertauschten“ TXD/RXD-Beschriftungen erklären (Vermutung, U). Notiere die Zuordnung in `captures/README.md`.
 2. **Orientierung markieren:** Ist die Buchse nicht kodiert, lässt sie sich verdreht aufstecken. Markiere Pin 1 an Kabel und Breadboard.
