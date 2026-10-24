@@ -74,3 +74,19 @@ Pin-Identifikation ohne Spannung (Netzstecker gezogen, Kabel und Modul getrennt)
 3. **Signalleitungen:** die beiden übrigen Lötaugen von CN4, an denen die Transistorstufen hängen.
 Mit Spannung (Maschine an, Platine fixiert): an den **Diodenenden** messen, statt an den Lötaugen. Anode ≈ 12 V, Kathode etwa 0,3–0,7 V darunter, wenn die Diode leitet. So kann ein ausrutschender Messfinger keine Signalleitung treffen.
 
+## Messprotokoll des Nutzers (Original-Modul)
+| Datum | Messung | Bedingung | Ergebnis | Aussage |
+|---|---|---|---|---|
+| 2026-10-24 | „GND gegen 3V3“, Anzeige „−.338 V“ (DC) | **ohne Spannung** (vom Nutzer bestätigt) | Lesart −0,338 V oder −3,38 V unklar | **keine** (stromlos, Restladung/Messrauschen) |
+| 2026-10-24 | Durchgang vom CN4-Lötauge mit quadratischer Umrandung zum Ende **ohne Ring** der oberen großen Diode | stromlos | ja | Das Lötauge ist sehr wahrscheinlich der **Versorgungseingang (+12 V)**; die Diode liegt dann in Reihe (Anode am Eingang, Kathode zum Regler). **Nicht unter Spannung bestätigt (U)** |
+
+Folgerung (U): CN4 **Pin 1 (Quadrat) = +12 V**. Wenn der CN11-Stecker der Hauptplatine +12 V an Pin 4 hat (Quelle), ist die Nummerierung am Modul-Ende des Kabels gespiegelt (1↔4). Sicher ist das erst nach Messung unter Spannung und Durchklingeln des Kabels.
+
+### Bank-Test mit externem 12-V-Netzteil (empfohlen, ohne Netzspannung der Maschine)
+Das Modul braucht nur 12 V Gleichspannung. Ein externes Netzteil vermeidet jeden Kontakt mit dem offenen Netzteil der Maschine.
+1. **Stromlos prüfen:** Die Diode in Reihe bestätigen (Diodentest: Rot an das Ende ohne Ring, Schwarz an das Ende mit Ring ergibt 0,2 bis 0,7 V). Durchgang vom **Ende mit Ring** zum Eingangspin des Reglers (laut Datenblatt Pin 2 VIN, Datenblatt vorher prüfen) und zu den Keramikkondensatoren dort. GND-Lötauge von CN4 über Durchgang zum Abschirmblech des ESP32 finden. Widerstand 3V3 gegen GND am orangen Tantal-Kondensator: Ein Kurzschluss (wenige Ohm, nicht ansteigend) → nicht einschalten.
+2. **Strombegrenzung:** Labornetzteil auf 12 V und 200 mA. Ohne Labornetzteil ein kleines 12-V-Steckernetzteil (höchstens etwa 0,5 A) mit einer flinken Sicherung 250 mA in Reihe oder einer 12-V-Glühlampe (z. B. 5 W) als Strombegrenzer in Reihe.
+3. **Anschließen:** Plus an das **Quadrat-Lötauge**, Minus an das GND-Lötauge. Das Modul liegt auf einer isolierenden Unterlage, keine Metallflächen darunter.
+4. **Messen:** Strom (mA, in Reihe), Spannung an der Kathode der Diode (≈ 11,3–11,7 V erwartet), am Reglereingang, am Tantal-Kondensator (3,3 V erwartet), LD1 beobachten.
+Auswertung: kein Strom und keine Spannung hinter der Diode → Diode oder Pfad unterbrochen. Strom grob 50–150 mA und 3,3 V → Modul lebt (LEDs prüfen, Boot-Log). Hoher Strom oder einbrechendes Netzteil → Kurzschluss (Tantal-Kondensator oder ESP32), sofort abschalten.
+
