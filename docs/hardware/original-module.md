@@ -60,3 +60,17 @@ Auswertung: 12 V am CN4, aber keine 3,3 V → Regler oder Last defekt. Keine 12 
 
 Sicherheit: Das Foto zeigt den offenen Netzanschluss. Handarbeit nur bei gezogenem Netzstecker. Für Messungen unter Spannung die Platine fixieren (nicht in der Hand halten), isolierte Klemmleitungen verwenden, eine Hand am Messgerät, und Abstand zum Klemmenblock halten. Pin 4 (+12 V) liegt beim Abgreifen neben den Signalpins: Ein Kurzschluss kann 12 V auf die UART-Leitungen der **Hauptplatine** legen und diese beschädigen.
 
+## CN4 und CN3: Aufdruck und Pin-Identifikation (Nahaufnahme 2026-10-24)
+Beobachtung (Foto der Oberseite, Lötaugen von CN3 und CN4):
+- **Kein Klartext** wie „12V“ oder „GND“ am Anschluss. Der Aufdruck liefert keine Polarität.
+- **CN4:** vier Lötaugen in einer Reihe. Der Aufdruck markiert Pin 1 an **zwei Stellen, die sich widersprechen**: eine „1“ in der linken Zelle eines Vier-Felder-Kastens oberhalb der Lötaugen, und eine quadratische Umrandung um das **rechte** Lötauge. Da die Steckverbinder auf der Unterseite sitzen, ist die Spiegelung zwischen Aufdruck und Stecker unklar. **Pin 1 ist daher nicht ablesbar (U).**
+- **CN3:** 2 × 5 Lötaugen, das Lötauge oben rechts ist quadratisch umrandet (vermutlich Pin 1).
+- Neben den Anschlüssen liegen **zwei große MELF-Dioden** mit weißem Ring auf der rechten Seite. Der Ring markiert die Kathode, die Stromrichtung zeigt also von den Anschlüssen zum Regler. Das spricht für eine Diode in der Versorgung (Verpolungsschutz oder ODER-Verknüpfung der Einspeisung von CN3 und CN4, U).
+- Zwei kleine SOT-23-Transistoren sitzen direkt unter den CN4-Lötaugen, je mit mehreren kleinen Widerständen und einem 4,7-kΩ-Widerstand („472“) in der Nähe. Das sieht nach **einer Transistorstufe je Datenleitung** aus (Pegelanpassung für TXD und RXD, U).
+
+Pin-Identifikation ohne Spannung (Netzstecker gezogen, Kabel und Modul getrennt):
+1. **GND:** Durchgang zum Abschirmblech des ESP32-Moduls und zum unmarkierten Anschluss des Tantal-Kondensators. Das Lötauge von CN4 mit Durchgang (nahe 0 Ω) ist GND (U, Abschirmblech und Kondensatorseite vorher gegeneinander prüfen).
+2. **+12 V:** Durchgang vom Lötauge zum linken Ende (Anode) einer der großen Dioden. Das ist der Versorgungspin, falls die Diode in der +12-V-Leitung liegt (U).
+3. **Signalleitungen:** die beiden übrigen Lötaugen von CN4, an denen die Transistorstufen hängen.
+Mit Spannung (Maschine an, Platine fixiert): an den **Diodenenden** messen, statt an den Lötaugen. Anode ≈ 12 V, Kathode etwa 0,3–0,7 V darunter, wenn die Diode leitet. So kann ein ausrutschender Messfinger keine Signalleitung treffen.
+
