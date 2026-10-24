@@ -80,7 +80,7 @@ Mit Spannung (Maschine an, Platine fixiert): an den **Diodenenden** messen, stat
 | 2026-10-24 | „GND gegen 3V3“, Anzeige „−.338 V“ (DC) | **ohne Spannung** (vom Nutzer bestätigt) | Lesart −0,338 V oder −3,38 V unklar | **keine** (stromlos, Restladung/Messrauschen) |
 | 2026-10-24 | Durchgang vom CN4-Lötauge mit quadratischer Umrandung zum Ende **ohne Ring** der oberen großen Diode | stromlos | ja | Das Lötauge ist sehr wahrscheinlich der **Versorgungseingang (+12 V)**; die Diode liegt dann in Reihe (Anode am Eingang, Kathode zum Regler). **Nicht unter Spannung bestätigt (U)** |
 
-Folgerung (U): CN4 **Pin 1 (Quadrat) = +12 V**. Wenn der CN11-Stecker der Hauptplatine +12 V an Pin 4 hat (Quelle), ist die Nummerierung am Modul-Ende des Kabels gespiegelt (1↔4). Sicher ist das erst nach Messung unter Spannung und Durchklingeln des Kabels.
+Korrigierte Folgerung (Nutzer hat GND am Pin mit dem Aufdruck „1“ gemessen): **CN4 Pin 1 (Aufdruck „1“) = GND**, das gegenüberliegende Lötauge mit der quadratischen Umrandung (**Pin 4**) = **+12 V** (aus Durchgang zur Diodenanode abgeleitet, nicht unter Spannung bestätigt, U). Das passt zur CN11-Nummerierung der Quelle (1 GND, 4 +12 V); das Kabel ist dann vermutlich 1:1 verdrahtet (U, Durchklingeln steht aus). Die quadratische Umrandung markiert hier also **nicht** Pin 1. Die frühere Vermutung eines gespiegelten Kabels ist damit überholt.
 
 ### Bank-Test mit externem 12-V-Netzteil (empfohlen, ohne Netzspannung der Maschine)
 Das Modul braucht nur 12 V Gleichspannung. Ein externes Netzteil vermeidet jeden Kontakt mit dem offenen Netzteil der Maschine.
